@@ -1,21 +1,28 @@
 # Kingdom Garden Junior — Storybook Edition 1.0
 
-## Changes
+## Implemented
 
-- One unified 30-book library: 28 existing library stories plus Pip Finds a Seed and Puddle Parade.
-- Original scalable vector woodland artwork, illustrated covers, coordinated colors, custom navigation icons, responsive mobile navigation, search and categories.
-- 2 short sentences per spread for the expanded library; the original stories retain their 3-sentence pages. Large adjustable reading text (30 / 36 / 42 CSS pixels).
-- Working favorites, progress, badges and garden integration. Each newly completed book awards 3 sunshine stars once. Plant flowers in any of 12 garden spots.
-- Optional gentle animations, tap-to-greet characters, tap-to-bloom flowers, and device reduced-motion support. Reading text stays still.
-- Existing sentence MP3 filenames retained. The audio player queues original recordings to match grouped pages. Device narration remains the fallback. Timed highlighting requires supplied timings; without them recorded narration highlights the active sentence.
-- Legacy index and Puddle Parade URLs route into the same application. Existing kgj-v1 garden data is migrated where available. The original narration generation script and workflow remain unchanged.
+- Unified Home, Stories, Favorites, Garden, Badges and Grown-up corner.
+- All 30 original stories available together. The original 28-story data order and audio asset paths are preserved for scripts/generate_narration.py.
+- Original vector character artwork, illustrated covers, woodland scenes, cream/sage palette, book-style typography, responsive layouts, and user-controlled animations.
+- The 28 library stories now display two short sentences per spread. The original Seed and Puddle stories retain their grouped sentences.
+- A single narration controller handles prerecorded audio, device speech fallback, replay, pause/resume, word pronunciation, and cancellation on navigation. Existing per-sentence MP3s are queued across each new spread; recordings need not be regenerated for the layout change.
+- Word highlighting uses supplied valid timing data when available. Without timestamps, recorded audio highlights its sentence. Device highlighting depends on speech-boundary events.
+- Completing each different story once earns 3 sunshine stars. Plant four flower varieties in a twelve-slot garden, earn milestone badges, and save favorites/progress locally. Previous original-story completion and flower count are migrated from kgj-v1.
+- No new paid services, API credentials, account signup, child information, or third-party analytics added.
 
-## Tests performed
+## Testing performed
 
-Chromium UI tests at desktop (1440px), tablet (834px), and phone (390px) viewport widths passed for rendering, navigation, 30-book count, multi-sentence pages, completion rewards, planting and horizontal-overflow checks. Behavioral tests passed for all 30 story openings, filters, search, favorites, text size, once-only rewards, selected planting slots, storage-unavailable fallback and reduced motion. Audio control tests used mocked speech and media objects to check full-page narration, pause/resume, replay, word taps, cancellation on navigation, queued recordings, timestamp highlights and sentence fallback.
+Chromium UI tests at desktop 1440x1100, tablet 834x1112 and phone 390x844 sizes passed: 30-book display, multi-sentence pages, navigation, story completion, reward balance, and flower planting. No horizontal overflow or uncaught JavaScript errors was observed in those tests.
 
-Limitations: physical iPad Safari playback and natural voice quality were not verified. No new natural voice files were generated as part of this visual redesign. Narration assets may be absent; the UI reports device versus recorded narration rather than claiming recordings exist. Scenes use reusable vector characters and props, not individually hand-painted artwork for each sentence.
+Additional functional checks passed for all 30 story openings, category filters, title search, favorites, text sizing, chosen garden slots, once-only rewards, storage-unavailable fallback, user animation toggle and OS reduced-motion preference. Mocked media/speech tests covered full-page narration, pause/resume, replay, individual words, stop, cancellation, queued recordings, timed highlighting and sentence fallback.
 
-## Rollback
+Test limitations: browser documents were loaded directly from the authored source because this environment blocked navigation to local test URLs. Tests used Chromium, not an actual iPad Safari device. Speech/media control tests were simulated; audible output and real MP3 recordings were not verified. Prerecorded natural narration was not generated as part of this visual release. The illustrations are reusable original vector scenes with per-story props, not individually painted artwork for every page.
 
-The original site is preserved on backup/pre-storybook-redesign-20261016 at commit 6d2f7ae917d6e637039ca1cc5cae4b862b98efa6. Revert the redesign commit if necessary; no force-push or history rewrite is required.
+## Deployment and rollback
+
+No build step is required. GitHub Pages can serve index.html, library.html, storybook-v1.css and storybook-v1.js from main at the repository root. Existing .nojekyll, narration scripts, and workflow files are preserved.
+
+Previous version: backup/pre-storybook-redesign-20261016 at commit 6d2f7ae917d6e637039ca1cc5cae4b862b98efa6. Restore by a normal revert/change; do not force-push.
+
+Repository update, Pages deployment status, and actual device playback are separate verification steps. A successful source commit alone does not prove a live deployment.
