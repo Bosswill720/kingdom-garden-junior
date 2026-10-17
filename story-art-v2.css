@@ -1,0 +1,15 @@
+/* Art 2: release styles affect artwork only. */
+.kg-painted{width:100%;height:100%;min-height:150px;background-repeat:no-repeat;background-size:calc(var(--kg-cols)*100%) 100%;background-position:var(--kg-x) center;background-color:#eadfc8}
+.kg-cover-v2{aspect-ratio:1.65!important;overflow:hidden}
+.kg-cover-v2>svg{display:block;width:100%;height:100%;object-fit:cover}
+.kg-scene-v2{padding-bottom:52px!important}
+.kg-scene-v2>svg{display:block;width:100%;height:auto;max-height:none!important;aspect-ratio:700/480}
+.kg-hero-v2>svg{display:block;width:100%;height:100%;object-fit:cover}
+.kg-cover-v2 .mascot,.kg-scene-v2 .mascot{animation:none!important}
+@keyframes kg-gentle-float{50%{translate:0 -5px}}
+@keyframes kg-warm-steam{50%{opacity:.55;translate:0 -8px}}
+.kg-float{animation:kg-gentle-float 3.5s ease-in-out 2}
+.kg-steam{animation:kg-warm-steam 3s ease-in-out 2}
+.no-motion .kg-float,.no-motion .kg-steam{animation:none!important}
+@media(prefers-reduced-motion:reduce){.kg-float,.kg-steam{animation:none!important}}
+@media(max-width:600px){.kg-painted{min-height:110px}.kg-scene-v2{padding-bottom:52px!important}}
