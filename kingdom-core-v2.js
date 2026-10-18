@@ -24,7 +24,11 @@ const lands=[
  {id:'village',name:'Village Lane',price:100,books:8,description:'Open a new driving destination and a three-car garage.'},
  {id:'market-square',name:'Market Square',price:160,books:12,description:'Meet characters and drive around the friendly market.'},
  {id:'orchard',name:'Orchard Road',price:250,books:16,description:'Explore fruit trees and the quiet pond.'},
- {id:'city-center',name:'City Center',price:400,books:22,description:'Open the bright town hall and the grand boulevard.'}
+ {id:'city-center',name:'City Center',price:400,books:22,description:'Open the bright town hall and the grand boulevard.'},
+ {id:'playground',name:'Happy Playground',price:65,books:4,description:'A little slide and swings for Pip and friends.'},
+ {id:'bakery',name:'Cozy Bakery',price:125,books:9,description:'A sweet little bakery for the market street.'},
+ {id:'rainbow-fountain',name:'Rainbow Fountain',price:220,books:14,description:'A sparkling fountain at the village center.'},
+ {id:'castle-hill',name:'Storybook Castle',price:650,books:25,description:'A beautiful castle for the top of your growing kingdom.'}
 ];
 const crops=[{id:'carrot',name:'Carrots',art:0},{id:'strawberry',name:'Strawberries',art:1},{id:'pumpkin',name:'Pumpkins',art:2},{id:'sunflower',name:'Sunflowers',art:3}];
 const flowers=['rose','sun','daisy','tulip'];
