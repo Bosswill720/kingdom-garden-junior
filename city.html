@@ -65,12 +65,20 @@ function carSVG(id,scale=1){
  let body='<rect x="-'+(w/2)+'" y="-7" width="'+w+'" height="36" rx="12" fill="'+c+'"/>';
  const windows=long?'<rect x="-37" y="-32" width="47" height="21" rx="5" fill="#e5f8f5"/><rect x="27" y="-19" width="22" height="14" rx="4" fill="#e5f8f5"/>':'<path d="M-19 -5 -10-26H16L30 -5Z" fill="#d9f1ed"/>';
  const cabs= id==='icecream-van'?'<path d="M-36-44h75" stroke="#fff5e2" stroke-width="12"/><circle cy="-51" r="9" fill="#e9d9b5"/>':id==='fire-truck'?'<circle cy="-43" r="9" fill="#d85858"/><path d="M-26-45h50" stroke="#eee2c0" stroke-width="5"/>':id==='tractor'?'<path d="M-34-34h44v32h-44Z" fill="#aedabd"/>':id==='school-bus'?'<path d="M-37-41h74" stroke="#fff5dc" stroke-width="9"/>':id==='big-truck'?'<rect x="-36" y="-34" width="47" height="25" rx="4" fill="#b991ca"/><text x="-12" y="-15" fill="#fff8ed" text-anchor="middle" font-size="13" font-weight="900">500</text>':'';
- return '<svg viewBox="-85 -75 170 116" xmlns="http://www.w3.org/2000/svg" aria-label="'+id.replace(/-/g,' ')+'" role="img"><g transform="scale('+scale+')"><ellipse cy="29" rx="'+(w*.62)+'" ry="10" fill="#405f5040"/>'+top+body+windows+cabs+'<circle cx="-'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="-'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/><circle cx="-'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/></g></svg>';
+ return '<svg x="-85" y="-58" width="170" height="116" viewBox="-85 -75 170 116" xmlns="http://www.w3.org/2000/svg" aria-label="'+id.replace(/-/g,' ')+'" role="img"><g transform="scale('+scale+')"><ellipse cy="29" rx="'+(w*.62)+'" ry="10" fill="#405f5040"/>'+top+body+windows+cabs+'<circle cx="-'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="-'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/><circle cx="-'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/></g></svg>';
 }
 const routePath='M68 418 C160 458 187 380 265 386 S422 472 515 396 S607 264 704 302 S817 417 909 316';
 const stops=[['Garden',.04],['Farm',.28],['Garage',.47],['Village',.7],['Market',.93]];
 function cityScene(){
  const land=model.lands, cars=model.vehicles;
+ const parked=cars.filter(id=>id!==(model.selected||cars[0])).slice(0,6).map((id,i)=>'<g transform="translate('+(640+i%3*76)+' '+(439+Math.floor(i/3)*45)+') scale(.48)">'+carSVG(id)+'</g>').join('');
+ const extras=(land.includes('meadow')?'<g><rect x="32" y="348" width="95" height="44" rx="9" fill="#ad7c53"/><path d="M48 380v-25m20 25v-25m20 25v-25m20 25v-25" stroke="#6b9f56" stroke-width="8"/><text x="80" y="410" text-anchor="middle" font-size="13" fill="#3e6951">MEADOW</text></g>':'')+
+ (land.includes('playground')?'<g transform="translate(372 302)"><path d="M0 42V-45m0 0h62l-20 88m-38-44h37" stroke="#bd8db0" stroke-width="9"/><path d="m60-44 38 83H53Z" fill="#e9b36f"/><path d="M-7 2h46v35H-7Z" fill="#9ec5d9"/></g>':'')+
+ (land.includes('orchard')?tree(80,176,.65)+tree(130,210,.68)+tree(193,180,.65):'')+
+ (land.includes('village')?building(655,127,'school',true):'')+
+ (land.includes('market-square')?'<g><rect x="783" y="330" width="110" height="50" rx="9" fill="#f4d391"/><path d="M775 325h126l-14-32h-97Z" fill="#dd9c92"/></g>':'')+
+ (land.includes('city-center')?building(782,123,'school',true):'')+
+ (land.includes('rainbow-fountain')?'<g transform="translate(487 310)"><ellipse cy="13" rx="52" ry="19" fill="#7dbbd0"/><path d="M0 0Q-28-47-43-5m43 5Q28-47 43-5" stroke="#effcff" stroke-width="6" fill="none"/><rect x="-16" y="0" width="32" height="11" rx="7" fill="#e3cf9f"/></g>':'');
  return '<svg id="world" viewBox="0 0 960 560" role="img" aria-label="Colorful little town with gardens, farm, market, garage, road, and owned vehicles">'+
  '<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#c6edf1"/><stop offset="1" stop-color="#fff2cb"/></linearGradient></defs>'+
  '<rect width="960" height="560" fill="url(#sky)"/><path d="M0 178Q120 122 261 177T520 150T960 158V560H0Z" fill="#b7dba7"/><path d="M0 280Q160 215 305 280T660 252T960 280V560H0Z" fill="#9bcf9b"/><path d="M0 460Q220 425 380 455T960 418V560H0Z" fill="#83c397"/>'+
@@ -78,13 +86,13 @@ function cityScene(){
  tree(70,287,1.1)+tree(883,230,1.25)+tree(410,180,.65)+tree(737,150,.7)+tree(572,144,.6)+
  '<path d="'+routePath+'" fill="none" stroke="#fcf8e8" stroke-width="74" stroke-linecap="round"/><path d="'+routePath+'" fill="none" stroke="#d9c59e" stroke-width="54" stroke-linecap="round"/><path d="'+routePath+'" fill="none" stroke="#fff9dc" stroke-width="4" stroke-dasharray="15 21" stroke-linecap="round"/>'+
  '<path d="'+routePath+'" id="roadCurve" fill="none" stroke="transparent" stroke-width="1"/>'+
- building(260,295,'farm',true)+building(585,238,'garage',true)+building(748,235,'market',true)+building(386,215,'school',true)+
+ building(260,295,'farm',true)+building(585,238,'garage',true)+building(748,235,'market',true)+building(386,215,'school',true)+extras+
  (land.includes('bakery')?building(485,187,'bakery',true):'')+
  (land.includes('castle-hill')?building(846,135,'castle',true):'')+
  '<path d="M0 525Q240 515 480 540T960 530" fill="none" stroke="#8ebad4" stroke-width="35" opacity=".8"/>'+
  Array.from({length:24},(_,i)=>'<circle cx="'+(25+i*41)%960+'" cy="'+(490+i%3*16)+'" r="'+(3+i%3)+'" fill="#f1c1a7"/>').join('')+
  animal(172,296,'fox')+animal(320,301,'bunny')+
- '<g id="movingCar" transform="translate(85 425)">'+carSVG(model.selected||cars[0]||'red-car',.55)+'</g>'+
+ '<g id="movingCar" transform="translate(85 425)">'+carSVG(model.selected||cars[0]||'red-car',.55)+'</g>'+parked+
  '<text x="24" y="37" fill="#3d7260" font-size="24" font-weight="900">MY LITTLE CITY</text>'+
  '</svg>';
 }
