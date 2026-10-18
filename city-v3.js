@@ -301,7 +301,13 @@ function confirmBuy(id){
 async function doPurchase(){
  if(!pending)return;
  const item=pending;const b=$('confirmPurchase');b.disabled=true;
- try{const r=await store.act({type:'buy',id:item.id});$('purchaseDialog').close();if(r.ok){notify('🎉 '+item.name+' has joined your wonderful town!');if(C.lands.some(x=>x.id===item.id))chosen=item.id;}
+ try{const r=await store.act({type:'buy',id:item.id});$('purchaseDialog').close();if(r.ok){
+   const lot=lots.find(l=>l.land===item.id);
+   if(lot)chosen=lot.id;
+   tab='world';mapOffset=null;render(false);
+   if(lot)requestAnimationFrame(()=>focusPoint(lot.x,lot.y,true));
+   notify('🎉 '+item.name+' has joined your wonderful town! Explore it on the map.');
+  }
  else notify(r.message||'Not available yet.');}
  catch(e){notify('Unable to save purchase. Your previous progress is untouched.');}
  finally{pending=null;b.disabled=false;}
