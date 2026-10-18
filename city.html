@@ -1,192 +1,58 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>My Wonderful City · Kingdom Garden Junior 2.0</title>
-<meta name="theme-color" content="#fff5dc">
-<style>
-:root{font-family:ui-rounded,"Avenir Next",system-ui,sans-serif;background:#fff9eb;color:#315044;color-scheme:light}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% -10%,#fff4c6 0,transparent 36%),#fff9eb}button,a{font:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}button{border:0;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:4px solid #d69e4e;outline-offset:3px}
-a{color:inherit;text-decoration:none}.shell{max-width:1260px;margin:auto;padding:18px 24px 55px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:17px}.brand em{font-style:normal;color:#bd805e}.logo{font-size:30px;width:50px;height:50px;display:grid;place-items:center;background:#d7e9bd;border-radius:16px;transform:rotate(-5deg)}
-.header-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.header-links a{background:#fffdf4;border:1px solid #e5ddc9;border-radius:16px;padding:13px 15px;font-size:13px;font-weight:800}.balance{border-radius:18px;padding:13px 18px;background:#ffe3a1;color:#775119;font-weight:900}
-.hero{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin:28px 0 18px}.hero h1{font-size:clamp(31px,4vw,52px);letter-spacing:-.04em;line-height:1.06;margin:5px 0 8px;font-weight:950;color:#2c5d4c}.hero p{margin:0;color:#718274;line-height:1.5;font-size:15px}.eyebrow{color:#b78643;font-size:12px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.hero-fox{font-size:65px;filter:drop-shadow(0 8px 6px #c8bd9355)}
-.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}.tabs button{border:1px solid #d9e3d4;background:#fffdf4;border-radius:18px;padding:13px 17px;font-weight:900;color:#497261;min-height:49px}.tabs button[aria-selected=true]{background:#2e775b;color:white;border-color:#2e775b;box-shadow:0 5px 0 #21554022}
-.panel{border:1px solid #e6e6d2;background:#fffdf6;border-radius:26px;box-shadow:0 12px 24px #7e99611a;padding:17px;margin-bottom:19px}
-.map-frame{overflow:hidden;border:5px solid #fff;border-radius:23px;background:#deedce;box-shadow:0 7px 23px #75937824}
-#world{display:block;width:100%;height:auto;aspect-ratio:960/560}
-.street-sign{font-weight:950;color:#315c49}
-.drivebar{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;padding:13px 4px 0}.drivebar button{border-radius:15px;background:#e3f1df;padding:12px 14px;font-weight:850;color:#2c644c;min-height:48px}.drivebar button:hover{background:#d2e9ca}
-#feedback{min-height:44px;background:#fff4db;border-radius:14px;padding:12px 15px;color:#705a31;font-weight:800;margin:14px 0}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
-.stat{background:#f2f6e9;padding:13px;border-radius:16px;text-align:center;color:#6b7965;font-size:12px}.stat b{font-size:25px;color:#355b48;display:block}
-h2{font-size:25px;letter-spacing:-.035em;margin:15px 0 8px;color:#355746}
-.small{color:#728271;font-size:13px;line-height:1.55}
-.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin:16px 0}
-.product{border:2px solid #e8eadb;background:#fffef9;border-radius:21px;overflow:hidden;display:flex;flex-direction:column;min-width:0;position:relative}
-.product figure{margin:0;height:130px;background:#e5f0dc;display:grid;place-items:center;overflow:hidden}.product:nth-child(3n+2) figure{background:#f8e9d1}.product:nth-child(3n+3) figure{background:#dfedf5}.product figure svg{width:92%;max-height:118px}
-.product .info{padding:13px;display:flex;flex:1;flex-direction:column;gap:7px}.product h3{font-size:16px;line-height:1.3;margin:0}.product p{color:#708070;font-size:12px;line-height:1.4;margin:0;flex:1}.product .price{font-weight:900;color:#b17432}.product button{margin-top:5px;background:#37785f;color:white;border-radius:13px;padding:13px 6px;font-weight:800;min-height:46px}.product button[disabled]{background:#dbe4d5;color:#667869}
-.owned{position:absolute;top:9px;left:9px;background:#fffaf0e8;padding:7px 10px;border-radius:12px;font-weight:900;color:#326b50;font-size:12px}
-.section-top{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.garage-card{display:flex;flex-wrap:wrap;align-items:center;gap:17px;border:2px solid #e5e8d8;border-radius:22px;padding:20px;background:#f6f6e7}
-.garage-art{width:205px;max-width:40vw;background:#ecf3e6;border-radius:18px;padding:12px}
-.garage-art svg{width:100%;height:auto}.garage-card p{font-size:13px;color:#697e70}
-.garage-card button{padding:12px;background:#33795e;color:white;border-radius:12px}
-.callout{margin:16px 0;background:#ffedc4;border-radius:20px;padding:16px 18px;line-height:1.5;color:#7d5c32}
-dialog{border:0;border-radius:24px;padding:24px;width:min(94vw,440px);box-shadow:0 20px 60px #243d3755;color:#355646}dialog::backdrop{background:#172a2488}dialog h2{margin:0 0 10px}dialog p{line-height:1.6}dialog .actions{display:flex;justify-content:end;gap:10px}dialog button{padding:13px 18px;border-radius:13px;font-weight:850;background:#e7ecdf;color:#355646}dialog #confirmBuy{background:#2e7558;color:white}
-footer{margin:20px 0;color:#81907e;font-size:12px;text-align:center}
-@media(max-width:600px){.shell{padding:13px 12px 45px}.hero{margin-top:18px}.hero-fox{font-size:44px}.header-links a{padding:9px 11px}.balance{padding:10px 13px}.stats{grid-template-columns:repeat(2,1fr)}.tabs button{flex:1;font-size:13px;padding:11px 10px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.product figure{height:95px}.product figure svg{max-height:87px}.product .info{padding:10px}.product h3{font-size:14px}.product p{font-size:11px}.drivebar{align-items:stretch}.drivebar button{flex:1 1 40%}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-#demoNotice{background:#fff1bd;border:2px dashed #d6ac5f;margin:12px 0 17px}#demoNotice strong{font-size:17px;color:#77511c}#demoNotice p{margin:10px 0 0;font-size:13px}#resetDemo{border-radius:11px;background:#795d42;color:#fff8e9;padding:10px 12px;margin-top:9px;font-weight:850;min-height:43px}#exitDemo{background:#795d42;color:#fff8e9;border-radius:13px;padding:11px 13px;font-weight:850;font-size:13px}#exitDemo[hidden],#demoNotice[hidden]{display:none!important}</style></head><body><div class="shell"><header><a class="brand" href="./library.html#home"><span class="logo">🏡</span><span>Kingdom Garden<br><em>MY WONDERFUL CITY · 2.0</em></span></a><div class="header-links"><a href="./library.html#library">📚 Read</a><a href="./writing.html">✏️ Write</a><a href="./math.html">🧮 Math</a><span class="balance" id="wallet" aria-live="polite">⭐ 0</span><a id="exitDemo" hidden href="./city.html?v=2">Exit test mode</a></div></header>
-<section class="hero"><div><div class="eyebrow">Read · Write · Count · Create</div><h1>A city full of little wonders.</h1><p>Your stories and learning adventures help you collect vehicles and grow your very own town.</p></div><span class="hero-fox" aria-hidden="true">🦊🚗</span></section>
-<section id="demoNotice" class="callout" hidden role="status"><strong>🧪 TEST MODE — 5,000 practice coins</strong><p>Your testing garage and purchases are separate from your child’s real Sunshine Coins. All reading unlocks are available for testing. <button id="resetDemo" type="button">Reset test city to 5,000 coins</button></p></section><nav class="tabs" aria-label="City activities"><button data-tab="world" aria-selected="true">🌳 My City</button><button data-tab="cars" aria-selected="false">🚘 Vehicles</button><button data-tab="land" aria-selected="false">🏡 Buildings</button><button data-tab="garage" aria-selected="false">🔧 Garage</button></nav>
-<main id="content"><p>Opening your city...</p></main><div id="feedback" role="status" aria-live="polite">Choose a car, explore the streets, and grow your kingdom!</div><footer>Real Kingdom Coins are earned through learning. Test-mode coins stay in a separate demo wallet. No ads, real-money purchases, fuel costs or timers.</footer></div>
-<dialog id="confirm" aria-labelledby="purchaseTitle"><h2 id="purchaseTitle">Add to my city?</h2><p id="purchaseText"></p><div class="actions"><button id="cancelBuy">Not now</button><button id="confirmBuy">Buy it!</button></div></dialog>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f9f7ee">
+<meta name="description" content="A spacious living storybook city for ages five to seven. Explore beautiful neighborhoods, collect vehicles, visit buildings and enjoy learning rewards.">
+<title>My Wonderful City 3.0 · Kingdom Garden Junior</title>
+<link rel="stylesheet" href="./city-v3.css?v=3">
+</head>
+<body>
+<header>
+<a href="./library.html#home" class="brand" aria-label="Back to Kingdom Garden Junior">
+<span class="brand-icon" aria-hidden="true">🏡</span>
+<span>Kingdom Garden<small>MY WONDERFUL CITY · 3.0</small></span>
+</a>
+<nav class="topnav" aria-label="Learning activities">
+<a href="./library.html#library">📚 Reading</a>
+<a href="./writing.html?release=writing-2">✏️ Writing</a>
+<a href="./math.html?release=math-1">🧮 Math</a>
+<button id="centerHome" class="chip" aria-label="Center on Pip's cottage">🏠 My home</button>
+<span id="wallet" class="coin" aria-label="Your Sunshine Coins">⭐ ...</span>
+</nav>
+</header>
+<main>
+<section class="hero">
+<div>
+<div class="eyebrow">A little world, a lifetime of wonder</div>
+<h1>Welcome to your wonderful city.</h1>
+<p>Wander down beautiful streets, discover your own buildings, take your car for a ride and let every learning adventure help your town grow.</p>
+</div>
+<div class="hero-scenery" aria-hidden="true"><span>🌳</span><span>🏘️</span><span>🦊</span></div>
+</section>
+<div id="testSlot"></div>
+<nav class="tabs" aria-label="City activities">
+<button data-tab="world" type="button" aria-selected="true">🌳 Explore the city</button>
+<button data-tab="cars" type="button" aria-selected="false">🚗 Vehicle shop</button>
+<button data-tab="land" type="button" aria-selected="false">🏡 Buildings & Land</button>
+<button data-tab="garage" type="button" aria-selected="false">🛠️ My garage</button>
+</nav>
+<div id="content" aria-live="off"><section class="board">Your wonderful city is opening…</section></div>
+<p class="notice">Every building has its own place. Drag or swipe the map to explore. Your child's existing coins and progress remain saved in the same browser. This is a peaceful game—no timer or real-money spending.</p>
+<p class="footer">Kingdom Garden Junior · My Wonderful City 3.0 · Read · Write · Count · Play</p>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="purchaseDialog" aria-labelledby="dialogTitle">
+<h2 id="dialogTitle">A lovely new thing!</h2>
+<p id="dialogCopy"></p>
+<div class="dialog-actions">
+<button id="cancelPurchase" type="button">Not now</button>
+<button id="confirmPurchase" class="buy" type="button">Add to my town</button>
+</div>
+</dialog>
+<noscript><p>JavaScript is required to explore the town. Please enable JavaScript or return to the story library.</p></noscript>
 <script src="./kingdom-core-v2.js?v=2"></script>
-<script>
-(function(){
-'use strict';
-const C=window.KingdomCore, $=id=>document.getElementById(id), dlg=$('confirm');
-let store,model,view='world',pending=null,carAnimation=0,position=0,cityName='Garden';
-const testing=new URLSearchParams(location.search).get('test')==='1';
-const TEST_KEY='kgj-kingdom-city-v2-test-wallet';
-function freshTestSave(){const s=C.initial({completed:C.bookIds});s.coins=5000;s.completed=C.bookIds.slice();return C.validate(s);}
-const color={ 'red-car':'#f27774','blue-car':'#75abc6','yellow-taxi':'#eabd58',pickup:'#b88a72',tractor:'#7ea46a','icecream-van':'#e8a4bd','school-bus':'#e4bd61','fire-truck':'#e96f6a','police-car':'#8aa6cb','dump-truck':'#cfaa63',excavator:'#d5b55b','race-car':'#d99abd','camper-van':'#91b39d','big-truck':'#a57fba'};
-function animal(x,y,which){
- const c=which==='bunny'?'#fff5e3':'#df9465';
- return '<g transform="translate('+x+' '+y+')"><ellipse cy="20" rx="24" ry="28" fill="'+c+'"/><ellipse cy="-18" rx="29" ry="27" fill="'+c+'"/>'+(which==='bunny'?'<ellipse cx="-18" cy="-49" rx="9" ry="27" fill="'+c+'"/><ellipse cx="18" cy="-49" rx="9" ry="27" fill="'+c+'"/>':'<path d="m-25-33-8-20 19 10m29 0 19-10-8 20" fill="'+c+'"/>')+'<ellipse cx="-10" cy="-19" rx="3" ry="4" fill="#38483e"/><ellipse cx="11" cy="-19" rx="3" ry="4" fill="#38483e"/><ellipse cx="0" cy="-8" rx="5" ry="3" fill="#775a4b"/><path d="m-7-5q7 7 14 0" fill="none" stroke="#775a4b" stroke-width="2"/></g>';
-}
-function tree(x,y,scale=1){return '<g transform="translate('+x+' '+y+') scale('+scale+')"><ellipse cy="31" rx="38" ry="10" fill="#4d8a6940"/><path d="M0 20V-33" stroke="#93765b" stroke-width="11"/><circle cy="-43" r="39" fill="#84b58e"/><circle cx="-20" cy="-53" r="27" fill="#9acb9a"/><circle cx="23" cy="-45" r="30" fill="#75a77e"/></g>';}
-function building(x,y,type,unlocked=true){
- let fill=type==='castle'?'#d2bdd8':type==='farm'?'#f2c38b':type==='school'?'#a9cad9':type==='bakery'?'#e6b8ae':type==='garage'?'#b9c4ac':'#f7dcaa';
- const name={farm:'FARM',school:'SCHOOL',garage:'GARAGE',bakery:'BAKERY',castle:'CASTLE',market:'MARKET'}[type]||type.toUpperCase();
- const width=type==='castle'?140:115, height=type==='castle'?130:95;
- return '<g transform="translate('+x+' '+y+')" opacity="'+(unlocked?1:.58)+'"><ellipse cx="0" cy="43" rx="'+(width*.65)+'" ry="18" fill="#2d513d2a"/><path d="M-'+(width*.5)+' '+(30-height)+' H'+(width*.5)+' V30 H-'+(width*.5)+' Z" fill="'+fill+'" stroke="#fff4db" stroke-width="4"/><path d="M-'+(width*.6)+' '+(30-height)+'L0 '+(0-height-10)+' '+(width*.6)+' '+(30-height)+'Z" fill="'+(type==='castle'?'#9775ab':'#d78d78')+'"/><rect x="-19" y="-27" width="38" height="57" rx="6" fill="#977d64"/><rect x="-43" y="-37" width="20" height="23" rx="4" fill="#fff6d4"/><rect x="25" y="-37" width="20" height="23" rx="4" fill="#fff6d4"/><rect x="-48" y="40" width="96" height="25" rx="12" fill="#fffdf4" stroke="#dcd5bc"/><text x="0" y="57" font-size="15" text-anchor="middle" fill="#4a6557" font-weight="900">'+name+'</text></g>';
-}
-function carSVG(id,scale=1){
- const c=color[id]||'#e9a48b',truck=/truck|pickup|excavator|tractor|bus|van/.test(id),long=/truck|bus/.test(id);
- const w=long?122:truck?106:90;
- let top=long?'<rect x="-43" y="-39" width="65" height="36" rx="8" fill="'+c+'"/><rect x="21" y="-26" width="35" height="26" rx="7" fill="'+c+'"/>':'<path d="M-31 0 -17-28Q-11-34 2-34H22Q33-32 42 0" fill="'+c+'"/>';
- let body='<rect x="-'+(w/2)+'" y="-7" width="'+w+'" height="36" rx="12" fill="'+c+'"/>';
- const windows=long?'<rect x="-37" y="-32" width="47" height="21" rx="5" fill="#e5f8f5"/><rect x="27" y="-19" width="22" height="14" rx="4" fill="#e5f8f5"/>':'<path d="M-19 -5 -10-26H16L30 -5Z" fill="#d9f1ed"/>';
- const cabs= id==='icecream-van'?'<path d="M-36-44h75" stroke="#fff5e2" stroke-width="12"/><circle cy="-51" r="9" fill="#e9d9b5"/>':id==='fire-truck'?'<circle cy="-43" r="9" fill="#d85858"/><path d="M-26-45h50" stroke="#eee2c0" stroke-width="5"/>':id==='tractor'?'<path d="M-34-34h44v32h-44Z" fill="#aedabd"/>':id==='school-bus'?'<path d="M-37-41h74" stroke="#fff5dc" stroke-width="9"/>':id==='big-truck'?'<rect x="-36" y="-34" width="47" height="25" rx="4" fill="#b991ca"/><text x="-12" y="-15" fill="#fff8ed" text-anchor="middle" font-size="13" font-weight="900">500</text>':'';
- return '<svg x="-85" y="-58" width="170" height="116" viewBox="-85 -75 170 116" xmlns="http://www.w3.org/2000/svg" aria-label="'+id.replace(/-/g,' ')+'" role="img"><g transform="scale('+scale+')"><ellipse cy="29" rx="'+(w*.62)+'" ry="10" fill="#405f5040"/>'+top+body+windows+cabs+'<circle cx="-'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="'+(w*.29)+'" cy="27" r="13" fill="#4d5d5d"/><circle cx="-'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.29)+'" cy="27" r="6" fill="#dbe5dc"/><circle cx="'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/><circle cx="-'+(w*.49)+'" cy="11" r="6" fill="#fff2c4"/></g></svg>';
-}
-const routePath='M68 418 C160 458 187 380 265 386 S422 472 515 396 S607 264 704 302 S817 417 909 316';
-const stops=[['Garden',.04],['Farm',.28],['Garage',.47],['Village',.7],['Market',.93]];
-function cityScene(){
- const land=model.lands, cars=model.vehicles;
- const parked=cars.filter(id=>id!==(model.selected||cars[0])).slice(0,6).map((id,i)=>'<g transform="translate('+(640+i%3*76)+' '+(439+Math.floor(i/3)*45)+') scale(.48)">'+carSVG(id)+'</g>').join('');
- const extras=(land.includes('meadow')?'<g><rect x="32" y="348" width="95" height="44" rx="9" fill="#ad7c53"/><path d="M48 380v-25m20 25v-25m20 25v-25m20 25v-25" stroke="#6b9f56" stroke-width="8"/><text x="80" y="410" text-anchor="middle" font-size="13" fill="#3e6951">MEADOW</text></g>':'')+
- (land.includes('playground')?'<g transform="translate(372 302)"><path d="M0 42V-45m0 0h62l-20 88m-38-44h37" stroke="#bd8db0" stroke-width="9"/><path d="m60-44 38 83H53Z" fill="#e9b36f"/><path d="M-7 2h46v35H-7Z" fill="#9ec5d9"/></g>':'')+
- (land.includes('orchard')?tree(80,176,.65)+tree(130,210,.68)+tree(193,180,.65):'')+
- (land.includes('village')?building(655,127,'school',true):'')+
- (land.includes('market-square')?'<g><rect x="783" y="330" width="110" height="50" rx="9" fill="#f4d391"/><path d="M775 325h126l-14-32h-97Z" fill="#dd9c92"/></g>':'')+
- (land.includes('city-center')?building(782,123,'school',true):'')+
- (land.includes('rainbow-fountain')?'<g transform="translate(487 310)"><ellipse cy="13" rx="52" ry="19" fill="#7dbbd0"/><path d="M0 0Q-28-47-43-5m43 5Q28-47 43-5" stroke="#effcff" stroke-width="6" fill="none"/><rect x="-16" y="0" width="32" height="11" rx="7" fill="#e3cf9f"/></g>':'');
- return '<svg id="world" viewBox="0 0 960 560" role="img" aria-label="Colorful little town with gardens, farm, market, garage, road, and owned vehicles">'+
- '<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#c6edf1"/><stop offset="1" stop-color="#fff2cb"/></linearGradient></defs>'+
- '<rect width="960" height="560" fill="url(#sky)"/><path d="M0 178Q120 122 261 177T520 150T960 158V560H0Z" fill="#b7dba7"/><path d="M0 280Q160 215 305 280T660 252T960 280V560H0Z" fill="#9bcf9b"/><path d="M0 460Q220 425 380 455T960 418V560H0Z" fill="#83c397"/>'+
- '<circle cx="822" cy="82" r="43" fill="#ffdb87"/><circle cx="102" cy="87" r="34" fill="#ffffffbb"/><circle cx="146" cy="82" r="26" fill="#ffffffbb"/>'+
- tree(70,287,1.1)+tree(883,230,1.25)+tree(410,180,.65)+tree(737,150,.7)+tree(572,144,.6)+
- '<path d="'+routePath+'" fill="none" stroke="#fcf8e8" stroke-width="74" stroke-linecap="round"/><path d="'+routePath+'" fill="none" stroke="#d9c59e" stroke-width="54" stroke-linecap="round"/><path d="'+routePath+'" fill="none" stroke="#fff9dc" stroke-width="4" stroke-dasharray="15 21" stroke-linecap="round"/>'+
- '<path d="'+routePath+'" id="roadCurve" fill="none" stroke="transparent" stroke-width="1"/>'+
- building(260,295,'farm',true)+building(585,238,'garage',true)+building(748,235,'market',true)+building(386,215,'school',true)+extras+
- (land.includes('bakery')?building(485,187,'bakery',true):'')+
- (land.includes('castle-hill')?building(846,135,'castle',true):'')+
- '<path d="M0 525Q240 515 480 540T960 530" fill="none" stroke="#8ebad4" stroke-width="35" opacity=".8"/>'+
- Array.from({length:24},(_,i)=>'<circle cx="'+(25+i*41)%960+'" cy="'+(490+i%3*16)+'" r="'+(3+i%3)+'" fill="#f1c1a7"/>').join('')+
- animal(172,296,'fox')+animal(320,301,'bunny')+
- '<g id="movingCar" transform="translate(85 425)">'+carSVG(model.selected||cars[0]||'red-car',.55)+'</g>'+parked+
- '<text x="24" y="37" fill="#3d7260" font-size="24" font-weight="900">MY LITTLE CITY</text>'+
- '</svg>';
-}
-function notify(t){$('feedback').textContent=t;}
-function legacy(){try{return JSON.parse(localStorage.getItem('kgj-storybook-v1')||'null')||{};}catch(_){return {};}}
-function render(){
- $('wallet').textContent='⭐ '+model.coins+(testing?' TEST coins':' coins');
- document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===view)));
- if(view==='world'){
- $('content').innerHTML='<section class="panel"><div class="map-frame">'+cityScene()+'</div><div class="drivebar"><strong>🚗 Tap a destination to drive:</strong>'+stops.map((x,i)=>'<button data-drive="'+i+'">'+x[0]+'</button>').join('')+'</div><div class="stats"><div class="stat"><b>'+model.completed.length+'</b>'+(testing?'Books unlocked for test':'Books finished')+'</div><div class="stat"><b>'+model.vehicles.length+'</b>Vehicles owned</div><div class="stat"><b>'+model.lands.length+'</b>Land & buildings</div><div class="stat"><b>'+model.coins+'</b>Sunshine Coins</div></div></section><div class="callout">⭐ Earn coins by finishing stories, handwriting practice and five-puzzle math games. Keep practicing to save for the 500-coin Giant Delivery Truck!</div>';
- if(!model.vehicles.length)notify('Read two new stories and buy your first Little Red Car for 20 coins!');
- }else if(view==='cars'||view==='land'){
- const list=view==='cars'?C.vehicles:C.lands;
- $('content').innerHTML='<section class="panel"><div class="section-top"><div><h2>'+(view==='cars'?'Pick your dream vehicle':'Grow your beautiful town')+'</h2><p class="small">'+(view==='cars'?'Every car can drive along your city road.':'Buildings unlock new places and new decoration themes.')+'</p></div><strong class="balance">⭐ '+model.coins+'</strong></div><div class="shop-grid">'+list.map(it=>{
- const owned=C.own(model,it.id),ok=model.completed.length>=it.books,can=ok&&model.coins>=it.price;
- const figure=view==='cars'?carSVG(it.id):'<div style="font-size:64px">'+({meadow:'🌾',village:'🏘️','market-square':'🏪',orchard:'🌳','city-center':'🏙️',playground:'🛝',bakery:'🧁','rainbow-fountain':'⛲','castle-hill':'🏰'}[it.id]||'🏡')+'</div>';
- return '<article class="product">'+(owned?'<span class="owned">✓ Yours!</span>':'')+'<figure>'+figure+'</figure><div class="info"><h3>'+it.name+'</h3><p>'+it.description+'</p><div class="price">⭐ '+it.price+'</div><small>'+it.books+' books to unlock'+(!ok?' · not yet unlocked':'')+'</small><button data-purchase="'+it.id+'" '+(owned?'disabled':'')+'>'+(owned?'Already yours':can?'Buy it!':'See goal')+'</button></div></article>';
- }).join('')+'</div></section>';
- }else{
- $('content').innerHTML='<section class="panel"><h2>My Happy Garage</h2><p class="small">Choose an owned vehicle and take it for a friendly ride. No fuel or repair costs.</p>'+(model.vehicles.length?model.vehicles.map(id=>'<div class="garage-card"><div class="garage-art">'+carSVG(id)+'</div><div><h2>'+C.vehicles.find(x=>x.id===id).name+'</h2><p>'+((model.selected||model.vehicles[0])===id?'Your current ride':'Waiting in your garage')+'</p><button data-select="'+id+'">Drive this vehicle</button></div></div>').join(''):'<div class="callout">Your garage is waiting for its first car. Finish stories and visit the vehicle shop!</div>')+'</section>';
- }
-}
-function animateTo(index){
- const road=$('roadCurve'),car=$('movingCar');if(!road||!car)return;
- const target=stops[index][1],start=position,finish=target,t0=performance.now(),duration=1500+Math.abs(target-start)*1700;
- cancelAnimationFrame(carAnimation);
- function tick(t){
-  const fraction=Math.min(1,(t-t0)/duration),ease=fraction*fraction*(3-2*fraction),at=start+(finish-start)*ease;
-  const len=road.getTotalLength(),p=road.getPointAtLength(at*len),p2=road.getPointAtLength(Math.min(len,at*len+2));
-  const angle=Math.atan2(p2.y-p.y,p2.x-p.x)*180/Math.PI;
-  car.setAttribute('transform','translate('+p.x+' '+p.y+') rotate('+angle+')');
-  if(fraction<1)carAnimation=requestAnimationFrame(tick);else{position=finish;cityName=stops[index][0];notify('Hooray! Your car arrived at '+cityName+'. Explore another place!');}
- }
- carAnimation=requestAnimationFrame(tick);
-}
-async function purchase(item){
- pending=item;
- const owned=C.own(model,item.id),unlocked=model.completed.length>=item.books,affordable=model.coins>=item.price;
- $('purchaseTitle').textContent=item.name;
- $('purchaseText').textContent=owned?'You already own this!':(!unlocked?'Finish '+item.books+' different stories to unlock this. ':!affordable?'Save '+(item.price-model.coins)+' more Sunshine Coins. ':'')+'Price: '+item.price+' coins. Your wallet: '+model.coins+'.';
- $('confirmBuy').hidden=owned||!unlocked||!affordable;
- dlg.showModal();
-}
-document.addEventListener('click',async e=>{
- const b=e.target.closest('button');if(!b)return;
- if(b.dataset.tab){cancelAnimationFrame(carAnimation);view=b.dataset.tab;render();}
- else if(b.dataset.drive!==undefined){
- if(!model.vehicles.length){notify('Your first little car is waiting in the Vehicle Shop!');return;}
- animateTo(Number(b.dataset.drive));
- }
- else if(b.dataset.purchase){const item=C.catalog.find(x=>x.id===b.dataset.purchase);if(item)purchase(item);}
- else if(b.dataset.select){const r=await store.act({type:'select',id:b.dataset.select});if(r.ok){view='world';position=0;render();notify('Ready to drive! Choose a destination on the road.');}}
-});
-$('cancelBuy').onclick=()=>dlg.close();
-$('confirmBuy').onclick=async()=>{
- if(!pending)return;
- $('confirmBuy').disabled=true;
- try{const r=await store.act({type:'buy',id:pending.id});dlg.close();notify(r.ok?'🎉 You bought '+pending.name+'! It now belongs in your city!':r.message);}catch(e){notify('Could not save your purchase. Please check your progress.');}finally{$('confirmBuy').disabled=false;pending=null;}
-};
-// Demo sessions use a separate browser key. Never modify the real kingdom wallet.
-let browserStorage;try{browserStorage=localStorage;}catch(_){}
-const sandbox=testing&&browserStorage?{
- getItem(k){return browserStorage.getItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k);},
- setItem(k,v){browserStorage.setItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k,v);},
- removeItem(k){browserStorage.removeItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k);}
-}:null;
-let hadTestSave=false;
-if(sandbox){try{hadTestSave=sandbox.getItem(C.KEY)!==null;}catch(_){/* permit memory-only mode */}}
-const scopedStorage=testing?sandbox:browserStorage;
-const lockProvider=testing&&navigator.locks?{request:(_key,fn)=>navigator.locks.request(TEST_KEY,fn)}:navigator.locks;
-store=C.createStore({storage:scopedStorage,locks:lockProvider});
-function initialise(){return store.init(testing?{completed:C.bookIds}:legacy()).then(async state=>{
- if(testing&&!hadTestSave)state=await store.restore(freshTestSave());
- model=state;
- store.subscribe(next=>{model=next;render()});
- if(testing){
-   $('demoNotice').hidden=false;$('exitDemo').hidden=false;
-   $('resetDemo').addEventListener('click',async()=>{
-    if(!window.confirm('Reset only the TEST city? Test purchases and test coins will restart at 5,000. Your real kingdom will not change.'))return;
-    try{await store.restore(freshTestSave());position=0;view='world';render();notify('🧪 Test city reset. 5,000 test coins are ready!');}
-    catch(e){notify('Test city could not reset: '+e.message);}
-   });
- }
- render();
-}).catch(e=>{
- $('content').textContent=testing?'Your test save needs recovery. Your real kingdom was not changed.':'Your city save needs recovery. Open Grown-up Corner in the reading app to restore your saved progress. Do not clear browser data.';
- notify(e.message);
-});}
-window.addEventListener('storage',e=>{
- if(e.key===(testing?TEST_KEY:C.KEY)&&store){try{store.refresh();}catch(_){/* leave current save intact */}}
-});
-initialise();
-})();
-</script></body></html>
+<script src="./city-v3.js?v=3"></script>
+</body>
+</html>
