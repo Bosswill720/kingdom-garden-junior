@@ -35,10 +35,10 @@ dialog{border:0;border-radius:24px;padding:24px;width:min(94vw,440px);box-shadow
 footer{margin:20px 0;color:#81907e;font-size:12px;text-align:center}
 @media(max-width:600px){.shell{padding:13px 12px 45px}.hero{margin-top:18px}.hero-fox{font-size:44px}.header-links a{padding:9px 11px}.balance{padding:10px 13px}.stats{grid-template-columns:repeat(2,1fr)}.tabs button{flex:1;font-size:13px;padding:11px 10px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.product figure{height:95px}.product figure svg{max-height:87px}.product .info{padding:10px}.product h3{font-size:14px}.product p{font-size:11px}.drivebar{align-items:stretch}.drivebar button{flex:1 1 40%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-</style></head><body><div class="shell"><header><a class="brand" href="./library.html#home"><span class="logo">🏡</span><span>Kingdom Garden<br><em>MY WONDERFUL CITY · 2.0</em></span></a><div class="header-links"><a href="./library.html#library">📚 Read</a><a href="./writing.html">✏️ Write</a><a href="./math.html">🧮 Math</a><span class="balance" id="wallet" aria-live="polite">⭐ 0</span></div></header>
+#demoNotice{background:#fff1bd;border:2px dashed #d6ac5f;margin:12px 0 17px}#demoNotice strong{font-size:17px;color:#77511c}#demoNotice p{margin:10px 0 0;font-size:13px}#resetDemo{border-radius:11px;background:#795d42;color:#fff8e9;padding:10px 12px;margin-top:9px;font-weight:850;min-height:43px}#exitDemo{background:#795d42;color:#fff8e9;border-radius:13px;padding:11px 13px;font-weight:850;font-size:13px}#exitDemo[hidden],#demoNotice[hidden]{display:none!important}</style></head><body><div class="shell"><header><a class="brand" href="./library.html#home"><span class="logo">🏡</span><span>Kingdom Garden<br><em>MY WONDERFUL CITY · 2.0</em></span></a><div class="header-links"><a href="./library.html#library">📚 Read</a><a href="./writing.html">✏️ Write</a><a href="./math.html">🧮 Math</a><span class="balance" id="wallet" aria-live="polite">⭐ 0</span><a id="exitDemo" hidden href="./city.html?v=2">Exit test mode</a></div></header>
 <section class="hero"><div><div class="eyebrow">Read · Write · Count · Create</div><h1>A city full of little wonders.</h1><p>Your stories and learning adventures help you collect vehicles and grow your very own town.</p></div><span class="hero-fox" aria-hidden="true">🦊🚗</span></section>
-<nav class="tabs" aria-label="City activities"><button data-tab="world" aria-selected="true">🌳 My City</button><button data-tab="cars" aria-selected="false">🚘 Vehicles</button><button data-tab="land" aria-selected="false">🏡 Buildings</button><button data-tab="garage" aria-selected="false">🔧 Garage</button></nav>
-<main id="content"><p>Opening your city...</p></main><div id="feedback" role="status" aria-live="polite">Choose a car, explore the streets, and grow your kingdom!</div><footer>All coins are earned through learning. No ads, real-money purchases, fuel costs or timers. Progress is saved on this device.</footer></div>
+<section id="demoNotice" class="callout" hidden role="status"><strong>🧪 TEST MODE — 5,000 practice coins</strong><p>Your testing garage and purchases are separate from your child’s real Sunshine Coins. All reading unlocks are available for testing. <button id="resetDemo" type="button">Reset test city to 5,000 coins</button></p></section><nav class="tabs" aria-label="City activities"><button data-tab="world" aria-selected="true">🌳 My City</button><button data-tab="cars" aria-selected="false">🚘 Vehicles</button><button data-tab="land" aria-selected="false">🏡 Buildings</button><button data-tab="garage" aria-selected="false">🔧 Garage</button></nav>
+<main id="content"><p>Opening your city...</p></main><div id="feedback" role="status" aria-live="polite">Choose a car, explore the streets, and grow your kingdom!</div><footer>Real Kingdom Coins are earned through learning. Test-mode coins stay in a separate demo wallet. No ads, real-money purchases, fuel costs or timers.</footer></div>
 <dialog id="confirm" aria-labelledby="purchaseTitle"><h2 id="purchaseTitle">Add to my city?</h2><p id="purchaseText"></p><div class="actions"><button id="cancelBuy">Not now</button><button id="confirmBuy">Buy it!</button></div></dialog>
 <script src="./kingdom-core-v2.js?v=2"></script>
 <script>
@@ -46,6 +46,9 @@ footer{margin:20px 0;color:#81907e;font-size:12px;text-align:center}
 'use strict';
 const C=window.KingdomCore, $=id=>document.getElementById(id), dlg=$('confirm');
 let store,model,view='world',pending=null,carAnimation=0,position=0,cityName='Garden';
+const testing=new URLSearchParams(location.search).get('test')==='1';
+const TEST_KEY='kgj-kingdom-city-v2-test-wallet';
+function freshTestSave(){const s=C.initial({completed:C.bookIds});s.coins=5000;s.completed=C.bookIds.slice();return C.validate(s);}
 const color={ 'red-car':'#f27774','blue-car':'#75abc6','yellow-taxi':'#eabd58',pickup:'#b88a72',tractor:'#7ea46a','icecream-van':'#e8a4bd','school-bus':'#e4bd61','fire-truck':'#e96f6a','police-car':'#8aa6cb','dump-truck':'#cfaa63',excavator:'#d5b55b','race-car':'#d99abd','camper-van':'#91b39d','big-truck':'#a57fba'};
 function animal(x,y,which){
  const c=which==='bunny'?'#fff5e3':'#df9465';
@@ -99,10 +102,10 @@ function cityScene(){
 function notify(t){$('feedback').textContent=t;}
 function legacy(){try{return JSON.parse(localStorage.getItem('kgj-storybook-v1')||'null')||{};}catch(_){return {};}}
 function render(){
- $('wallet').textContent='⭐ '+model.coins+' coins';
+ $('wallet').textContent='⭐ '+model.coins+(testing?' TEST coins':' coins');
  document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===view)));
  if(view==='world'){
- $('content').innerHTML='<section class="panel"><div class="map-frame">'+cityScene()+'</div><div class="drivebar"><strong>🚗 Tap a destination to drive:</strong>'+stops.map((x,i)=>'<button data-drive="'+i+'">'+x[0]+'</button>').join('')+'</div><div class="stats"><div class="stat"><b>'+model.completed.length+'</b>Books finished</div><div class="stat"><b>'+model.vehicles.length+'</b>Vehicles owned</div><div class="stat"><b>'+model.lands.length+'</b>Land & buildings</div><div class="stat"><b>'+model.coins+'</b>Sunshine Coins</div></div></section><div class="callout">⭐ Earn coins by finishing stories, handwriting practice and five-puzzle math games. Keep practicing to save for the 500-coin Giant Delivery Truck!</div>';
+ $('content').innerHTML='<section class="panel"><div class="map-frame">'+cityScene()+'</div><div class="drivebar"><strong>🚗 Tap a destination to drive:</strong>'+stops.map((x,i)=>'<button data-drive="'+i+'">'+x[0]+'</button>').join('')+'</div><div class="stats"><div class="stat"><b>'+model.completed.length+'</b>'+(testing?'Books unlocked for test':'Books finished')+'</div><div class="stat"><b>'+model.vehicles.length+'</b>Vehicles owned</div><div class="stat"><b>'+model.lands.length+'</b>Land & buildings</div><div class="stat"><b>'+model.coins+'</b>Sunshine Coins</div></div></section><div class="callout">⭐ Earn coins by finishing stories, handwriting practice and five-puzzle math games. Keep practicing to save for the 500-coin Giant Delivery Truck!</div>';
  if(!model.vehicles.length)notify('Read two new stories and buy your first Little Red Car for 20 coins!');
  }else if(view==='cars'||view==='land'){
  const list=view==='cars'?C.vehicles:C.lands;
@@ -152,9 +155,38 @@ $('confirmBuy').onclick=async()=>{
  $('confirmBuy').disabled=true;
  try{const r=await store.act({type:'buy',id:pending.id});dlg.close();notify(r.ok?'🎉 You bought '+pending.name+'! It now belongs in your city!':r.message);}catch(e){notify('Could not save your purchase. Please check your progress.');}finally{$('confirmBuy').disabled=false;pending=null;}
 };
-window.addEventListener('storage',e=>{if(e.key===C.KEY&&store){try{store.refresh();}catch(_){}}});
+// Demo sessions use a separate browser key. Never modify the real kingdom wallet.
 let browserStorage;try{browserStorage=localStorage;}catch(_){}
-store=C.createStore({storage:browserStorage,locks:navigator.locks});
-store.init(legacy()).then(s=>{model=s;store.subscribe(next=>{model=next;render()});render();}).catch(e=>{$('content').textContent='Your city save needs recovery. Open Grown-up Corner in the reading app to restore your saved progress. Do not clear browser data.';notify(e.message);});
+const sandbox=testing&&browserStorage?{
+ getItem(k){return browserStorage.getItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k);},
+ setItem(k,v){browserStorage.setItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k,v);},
+ removeItem(k){browserStorage.removeItem(k===C.KEY?TEST_KEY:'kgj-test-v2:'+k);}
+}:null;
+let hadTestSave=false;
+if(sandbox){try{hadTestSave=sandbox.getItem(C.KEY)!==null;}catch(_){/* permit memory-only mode */}}
+const scopedStorage=testing?sandbox:browserStorage;
+const lockProvider=testing&&navigator.locks?{request:(_key,fn)=>navigator.locks.request(TEST_KEY,fn)}:navigator.locks;
+store=C.createStore({storage:scopedStorage,locks:lockProvider});
+function initialise(){return store.init(testing?{completed:C.bookIds}:legacy()).then(async state=>{
+ if(testing&&!hadTestSave)state=await store.restore(freshTestSave());
+ model=state;
+ store.subscribe(next=>{model=next;render()});
+ if(testing){
+   $('demoNotice').hidden=false;$('exitDemo').hidden=false;
+   $('resetDemo').addEventListener('click',async()=>{
+    if(!window.confirm('Reset only the TEST city? Test purchases and test coins will restart at 5,000. Your real kingdom will not change.'))return;
+    try{await store.restore(freshTestSave());position=0;view='world';notify('🧪 Test city reset. 5,000 test coins are ready!');}
+    catch(e){notify('Test city could not reset: '+e.message);}
+   });
+ }
+ render();
+}).catch(e=>{
+ $('content').textContent=testing?'Your test save needs recovery. Your real kingdom was not changed.':'Your city save needs recovery. Open Grown-up Corner in the reading app to restore your saved progress. Do not clear browser data.';
+ notify(e.message);
+});}
+window.addEventListener('storage',e=>{
+ if(e.key===(testing?TEST_KEY:C.KEY)&&store){try{store.refresh();}catch(_){/* leave current save intact */}}
+});
+initialise();
 })();
 </script></body></html>
