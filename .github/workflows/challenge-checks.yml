@@ -1,7 +1,12 @@
 name: Challenge Lab checks
 on:
   push:
-    branches: [feature/challenge-learning-1]
+    branches: [feature/challenge-learning-1, main]
+    paths:
+      - 'challenge*'
+      - 'library.html'
+      - 'tests/challenge/**'
+      - '.github/workflows/challenge-checks.yml'
   pull_request:
     branches: [main]
     paths:
@@ -35,6 +40,9 @@ jobs:
       - name: Complete authored learning activities in Chromium over HTTP
         if: always()
         run: python tests/challenge/browser_test.py
+      - name: Verify published Pages files and play a live mission
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: python tests/challenge/live_smoke.py
       - name: Retain test reports and screenshots
         if: always()
         uses: actions/upload-artifact@v4
