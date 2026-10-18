@@ -27,3 +27,14 @@ All coins are fictional, earned by completing activities, and cannot be bought. 
 
 ## Rollback
 The old `kingdom-core-v1.js` remains in the repository. Existing legacy v1 user data is still stored under `kgj-kingdom-v1`, with recovery snapshots. Restore prior markup and script versions through standard GitHub revert (never force push).
+
+## Test Wallet (added after the 2.0 release)
+
+Open `city.html?v=2&test=1` to get a separate **5,000-coin demo wallet** automatically. The test wallet has all 30 story-based unlock requirements satisfied so testers can buy all fourteen vehicles (including the 500-coin truck) and all nine building/land upgrades immediately.
+
+- This mode uses local key `kgj-kingdom-city-v2-test-wallet` instead of the real child wallet `kgj-kingdom-v1`.
+- Demo coins and demo purchases cannot change the real wallet, real reading completion, writing/math stickers or existing kingdom.
+- The clearly marked TEST MODE banner includes a reset button restoring 5,000 test coins and clearing test purchases; the header provides an Exit test mode link.
+- Testing is local to each browser/device; other devices will open their own test wallet.
+- Thirteen isolated-core checks passed for seeded funds, all unlocks, buying the truck and castle, persisting test purchases, reset, and real-wallet isolation.
+- This is a local demonstration feature, not a server-side secured administrator credit mechanism. Physical iPad Safari testing has not been performed.
