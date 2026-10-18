@@ -157,7 +157,7 @@ function scene(){
  clouds()+surroundings()+road()+booked+
  '<g opacity=".82"><text x="135" y="80" font-size="53" font-family="Georgia,serif" font-weight="700" fill="#668b77">The Wonderful Neighborhood</text><text x="140" y="120" font-size="23" fill="#76967c">A little world. A big adventure.</text></g>'+
  '<g id="parked-cars">'+vehicles+'</g>'+
- '<g id="travelling-car" transform="translate('+driving.x+' '+driving.y+')">'+carArt(model.selected||model.vehicles[0]||'red-car',.9)+'</g>'+
+ (model.vehicles.length?'<g id="travelling-car" transform="translate('+driving.x+' '+driving.y+')">'+carArt(model.selected||model.vehicles[0],.9)+'</g>':'')+
  '</svg>';
 }
 function miniMap(){
@@ -222,6 +222,7 @@ function render(preserve=true){
  $('content').innerHTML=tab==='world'?worldView():tab==='cars'||tab==='land'?catalogView(tab):garageView();
  if(tab==='world'){
   const v=$('worldViewport'),s=$('world');if(s){s.style.width=W*zoom+'px';s.style.height=H*zoom+'px';}
+  setupDesktopPan(v);
   requestAnimationFrame(()=>{
    if(!v)return;
    if(mapOffset){v.scrollLeft=mapOffset.left;v.scrollTop=mapOffset.top;}
@@ -230,6 +231,31 @@ function render(preserve=true){
   });
  }
  const btn=$('resetTest');if(btn)btn.onclick=resetDemo;
+}
+let ignorePanClick=false;
+function setupDesktopPan(v){
+ if(!v)return;
+ let drag=null;
+ v.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'||e.button!==0)return;
+  drag={x:e.clientX,y:e.clientY,left:v.scrollLeft,top:v.scrollTop,moved:false};
+ });
+ v.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(Math.abs(dx)+Math.abs(dy)>8)drag.moved=true;
+  if(!drag.moved)return;
+  v.classList.add('grabbing');
+  v.scrollLeft=drag.left-dx;v.scrollTop=drag.top-dy;
+  e.preventDefault();
+ });
+ const end=()=>{
+  if(!drag)return;
+  const moved=drag.moved;drag=null;v.classList.remove('grabbing');
+  if(moved){ignorePanClick=true;setTimeout(()=>{ignorePanClick=false},0);}
+ };
+ v.addEventListener('pointerup',end);v.addEventListener('pointercancel',end);
+ v.addEventListener('pointerleave',end);
 }
 function focusPoint(x,y,instant=false){
  const v=$('worldViewport');if(!v)return;
@@ -292,6 +318,7 @@ async function resetDemo(){
  catch(e){notify('Test save could not reset; real kingdom is untouched.');}
 }
 function handleClick(e){
+ if(ignorePanClick){e.preventDefault();return;}
  const b=e.target.closest('button');
  if(b){
   if(b.dataset.tab)return changeTab(b.dataset.tab);
