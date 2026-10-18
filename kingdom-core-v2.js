@@ -87,7 +87,7 @@ function reduce(input,a){
   const isNew=!s.completed.includes(a.book),eligible=isNew||!s.readDays[a.book]||today>s.readDays[a.book];
   const earned=isNew?10:eligible?5:3;
   if(isNew)s.completed.push(a.book);
-  let bonus=0;if(eligible){s.coins+=earned;s.readDays[a.book]=today;if(s.farm.plots.some(Boolean))s.farm.stage=Math.min(2,s.farm.stage+1);note(s,'reading',earned,{book:a.book});
+  let bonus=0;if(earned>0){s.coins+=earned;if(eligible)s.readDays[a.book]=today;if(s.farm.plots.some(Boolean))s.farm.stage=Math.min(2,s.farm.stage+1);note(s,'reading',earned,{book:a.book});
    for(const [id,ids] of sets){if(!s.bonuses.includes(id)&&ids.includes(a.book)&&ids.every(b=>s.completed.includes(b))){s.bonuses.push(id);bonus+=15;s.coins+=15;note(s,'collection',15,{collection:id});}}
   }
   result={ok:true,earned,bonus,isNew,farmStage:s.farm.stage,message:earned?'Lovely reading!':'You already earned today’s reward for this book. Rereading is always welcome.'};
