@@ -1,58 +1,15 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f9f7ee">
-<meta name="description" content="A spacious living storybook city for ages five to seven. Explore beautiful neighborhoods, collect vehicles, visit buildings and enjoy learning rewards.">
-<title>My Wonderful City 3.0 · Kingdom Garden Junior</title>
-<link rel="stylesheet" href="./city-v3.css?v=3">
-</head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f6f4ea"><meta name="description" content="Place your collected vehicles and buildings in a little living city. Watch friendly cars explore and play, all on one screen."><title>Little Living City 4.0 · Kingdom Garden Junior</title><link rel="stylesheet" href="./city-v4.css?v=4.0.0"></head>
 <body>
-<header>
-<a href="./library.html#home" class="brand" aria-label="Back to Kingdom Garden Junior">
-<span class="brand-icon" aria-hidden="true">🏡</span>
-<span>Kingdom Garden<small>MY WONDERFUL CITY · 3.0</small></span>
-</a>
-<nav class="topnav" aria-label="Learning activities">
-<a href="./library.html#library">📚 Reading</a>
-<a href="./writing.html?release=writing-2">✏️ Writing</a>
-<a href="./math.html?release=math-1">🧮 Math</a>
-<button id="centerHome" class="chip" aria-label="Center on Pip's cottage">🏠 My home</button>
-<span id="wallet" class="coin" aria-label="Your Sunshine Coins">⭐ ...</span>
-</nav>
-</header>
-<main>
-<section class="hero">
-<div>
-<div class="eyebrow">A little world, a lifetime of wonder</div>
-<h1>Welcome to your wonderful city.</h1>
-<p>Wander down beautiful streets, discover your own buildings, take your car for a ride and let every learning adventure help your town grow.</p>
-</div>
-<div class="hero-scenery" aria-hidden="true"><span>🌳</span><span>🏘️</span><span>🦊</span></div>
-</section>
-<div id="testSlot"></div>
-<nav class="tabs" aria-label="City activities">
-<button data-tab="world" type="button" aria-selected="true">🌳 Explore the city</button>
-<button data-tab="cars" type="button" aria-selected="false">🚗 Vehicle shop</button>
-<button data-tab="land" type="button" aria-selected="false">🏡 Buildings & Land</button>
-<button data-tab="garage" type="button" aria-selected="false">🛠️ My garage</button>
-</nav>
-<div id="content" aria-live="off"><section class="board">Your wonderful city is opening…</section></div>
-<p class="notice">Every building has its own place. Drag or swipe the map to explore. Your child's existing coins and progress remain saved in the same browser. This is a peaceful game—no timer or real-money spending.</p>
-<p class="footer">Kingdom Garden Junior · My Wonderful City 3.0 · Read · Write · Count · Play</p>
-</main>
-<div id="toast" role="status" aria-live="polite"></div>
-<dialog id="purchaseDialog" aria-labelledby="dialogTitle">
-<h2 id="dialogTitle">A lovely new thing!</h2>
-<p id="dialogCopy"></p>
-<div class="dialog-actions">
-<button id="cancelPurchase" type="button">Not now</button>
-<button id="confirmPurchase" class="buy" type="button">Add to my town</button>
-</div>
-</dialog>
-<noscript><p>JavaScript is required to explore the town. Please enable JavaScript or return to the story library.</p></noscript>
-<script src="./kingdom-core-v2.js?v=2"></script>
-<script src="./city-v3.js?v=3"></script>
-</body>
-</html>
+<a class="skip" href="#town">Skip to the city</a>
+<header class="topbar"><a href="./library.html#home" class="brand" aria-label="Return to Kingdom Garden"><span class="brand-mark" data-icon="home"></span><span class="brand-text">Little Living City<small>KINGDOM GARDEN JUNIOR · 4.0</small></span></a><div class="top-actions"><span class="pill wallet"><span data-icon="star"></span><b id="coins">—</b></span><button class="pill" id="pauseCity" aria-label="Pause city"><span data-icon="pause"></span><span class="pause-label">Pause</span></button><button class="icon-button" id="settings" aria-label="Grown-up settings and saves"><span data-icon="settings"></span></button></div></header>
+<div class="test-strip" id="testStrip" hidden><b>TEST CITY</b><span>Separate coins & purchases. Your child's save stays safe.</span><a href="./city.html?release=city-4">Exit test</a></div>
+<div class="subtitle-bar"><div><h1>Your little world, brought to life.</h1><p>Collect. Place. Watch a little story happen.</p></div><span class="status-pill"><i></i><span id="cityStatus">Opening the city…</span></span></div>
+<main class="canvas-area" id="boardArea"><p class="loading" id="loading">Your little neighborhood is opening…</p><svg id="town" class="town" role="group" aria-label="Complete city overview with eight neighborhoods" tabindex="0" hidden xmlns="http://www.w3.org/2000/svg"><g id="staticTown"></g><g id="carLayer"></g><g id="momentLayer" aria-hidden="true"></g><g id="placementLayer"></g></svg><div id="liveStory" class="live-story" aria-hidden="true"></div></main>
+<div class="hintbar" id="hintbar" role="status"><span>Everything you own has a place here.</span></div>
+<nav class="dock" aria-label="City controls"><button class="active" id="townButton"><span data-icon="home"></span>My city</button><button data-panel="cars"><span data-icon="car"></span>My cars</button><button data-panel="build"><span data-icon="build"></span>Build</button><button data-panel="flowers"><span data-icon="flower"></span>Decorate</button><button class="shop-button" data-panel="shop"><span data-icon="bag"></span>Shop</button><a href="./library.html#home"><span data-icon="book"></span>Learn</a></nav>
+<dialog id="sheet" aria-labelledby="sheetTitle"><div class="sheet-head"><div><p class="eyebrow" id="sheetEyebrow">YOUR LITTLE COLLECTION</p><h2 id="sheetTitle">My cars</h2><p id="sheetSubtitle"></p></div><button class="icon-button" id="closeSheet" aria-label="Close panel"><span data-icon="close"></span></button></div><div id="sheetBody" class="sheet-body"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div><input type="file" id="importFile" accept="application/json,.json" hidden>
+<noscript><style>.canvas-area{display:none}</style><p>This city needs JavaScript. Return to <a href="./library.html">Kingdom Garden Junior</a> or open the website in Safari.</p></noscript>
+<script src="./kingdom-core-v2.js?v=2"></script><script src="./city-core-v4.js?v=4.0.0"></script><script src="./city-art-v4.js?v=4.0.0"></script><script src="./city-app-v4.js?v=4.0.0"></script>
+</body></html>
