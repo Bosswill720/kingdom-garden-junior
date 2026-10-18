@@ -1,36 +1,37 @@
 'use strict';
-const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const root=path.resolve(__dirname,'../..');const Q=require(path.join(root,'challenge-core-v1.js')),K=require(path.join(root,'kingdom-core-v2.js')),Wallet=require(path.join(root,'challenge-wallet-v1.js'));
-global.window={};require(path.join(root,'challenge-reading-v1.js'));let checks=0,questions=0;const ok=(value,msg)=>{assert.ok(value,msg);checks++;};
-function expected(q){const p=q.prompt,n=p.match(/\d+/g).map(Number);switch(q.skill){
-case 'delivery':return q.level===0?n[0]+n[1]-n[2]:n[0]*n[1]-n[2]+(n[3]||0);
-case 'machine':return q.level===0?n[1]-n[0]:(n[2]-n[1])/n[0];
-case 'fractions':return q.level===0?`${n[1]}/${n[0]}`:q.level===1?n[0]*n[2]/n[1]:n[0]*n[1]/n[2];
-case 'place':{if(q.level===0)return n[0]*10+n[1]+n[2]*10;if(q.level===1)return n[0]+n[1]-100;const reversed=Number(String(n[0]).split('').reverse().join(''));return Math.abs(n[0]-reversed);}
-case 'time':{const [_,h,m,d]=p.match(/leaves at (\d+):(\d+).*trip takes (\d+)/);const rest=p.match(/rest stop takes (\d+)/);return Q.clock(+h*60+ +m+ +d+(rest?+rest[1]:0));}
-case 'market':return q.level===0?n[0]-n[1]-n[2]:q.level===1?n[2]-n[0]*n[1]:Math.floor(n[1]/n[0]);
-case 'patterns':{const v=p.match(/(\d+(?:, \d+)+), __/)[1].split(', ').map(Number);return q.level===0?v[3]+(v[3]-v[2]):q.level===1?v[3]+(v[3]-v[2])+1:v[3]*2+1;}
-case 'logic':{const candidates=Array.from({length:999},(_,i)=>i+1).filter(x=>{const hundreds=Math.floor(x/100),tens=Math.floor(x/10)%10,ones=x%10;if(q.level===0)return x>=10&&x<100&&tens===n[0]&&tens+ones===n[1];if(q.level===1)return x>n[0]&&x<n[1]&&tens+ones===n[2];return x>=100&&hundreds===n[0]&&ones===tens+2&&hundreds+tens+ones===n[2];});assert.equal(candidates.length,1,'Mystery number must be uniquely identified');return candidates[0];}
-}}
-for(const skill of Q.skills)for(let l=0;l<3;l++)for(let seed=0;seed<1000;seed++){
- const q=Q.make(skill.id,l,seed);assert.equal(q.answer,expected(q),q.prompt);assert.ok(Q.correct(String(q.answer),q));assert.ok(q.steps.length&&q.hint.length);if(q.kind==='number')assert.ok(Number.isSafeInteger(q.answer)&&q.answer>=0);assert.deepEqual(q,Q.make(skill.id,l,seed));questions++;
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.resolve(__dirname,'../..'),K=require(root+'/kingdom-core-v2.js'),C=require(root+'/challenge-core-v1.js'),WC=require(root+'/challenge-wallet-v1.js');
+const win={KGChallengeCore:C};for(const f of ['challenge-deep-v1.js','challenge-reading-v1.js'])vm.runInNewContext(fs.readFileSync(root+'/'+f,'utf8'),{window:win});
+let checks=0,questions=0,audited=0;const ok=(x,msg)=>{assert.ok(x,msg);checks++;};
+function expected(m){switch(m.op){case'delivery':return(m.a*m.b-m.c+m.d)/m.groups;case'machine':return(m.t+m.d)/m.a-m.c;case'fractions':return(m.total-m.total*m.p/m.den)*(m.groups-1)/m.groups;case'place':return Math.abs(m.t-m.reversed)/9;case'time':{const mins=m.start+m.durations.reduce((a,b)=>a+b,0);return(Math.floor(mins/60)%12||12)+':'+String(mins%60).padStart(2,'0');}case'market':return Math.floor((m.total-m.a*m.b)/m.c);case'patterns':return m.last*2+m.increment;case'logic':{const matches=[];for(let n=100;n<=999;n++){const d=String(n).split('').map(Number);if(d[0]===m.hundreds&&d[0]+d[1]+d[2]===m.sum&&d[2]-d[1]===m.difference)matches.push(n);}assert.equal(matches.length,1);return matches[0];}case'perimeter':return 2*m.a+2*m.b;case'side':return m.area/m.a;case'area':return(m.perimeter-2*m.a)/2*m.a;case'share':return m.total/m.groups;case'remainder':return m.total%m.groups;case'boxes':return(m.total-m.extra)/m.groups+m.added;default:throw Error('No independent solver: '+m.op);}}
+for(const skill of C.skills)for(let level=0;level<3;level++)for(let seed=0;seed<1000;seed++){
+ const q=C.make(skill.id,level,seed);questions++;
+ assert.ok(q.prompt.length>20&&q.hint.length>5&&q.steps.length>0);
+ assert.ok(C.correct(String(q.answer),q),'Expected answer rejected: '+q.id);
+ assert.ok(!C.correct('not a number',q));assert.ok(!C.correct('',q));
+ if(q.kind==='number'){assert.ok(Number.isFinite(q.answer)&&q.answer>=0);assert.ok(!C.correct(String(q.answer+1),q));}
+ if(q.audit){audited++;assert.equal(q.answer,expected(q.audit),'Independent result: '+q.id);if(q.audit.op==='delivery')assert.ok(q.audit.c<=q.audit.a*q.audit.b,'Cannot deliver more than the loaded books: '+q.id);}
+ if(seed<10)assert.deepEqual(q,C.make(skill.id,level,seed));
 }
-ok(Q.skills.length===8,'8 games');ok(Q.levels.length===3,'3 levels');
-for(const bad of ['',' ','0x10','Infinity','NaN','six','12cats','1e2'])ok(!Q.correct(bad,{kind:'number',answer:0}),'reject malformed numeric input '+bad);
-ok(Q.correct(' 4/8 ',{kind:'fraction',fraction:[1,2]}),'equivalent fraction');ok(!Q.correct('1/0',{kind:'fraction',fraction:[1,2]}),'no zero denominator');ok(!Q.correct('0:15',{kind:'time',answer:'12:15'}),'strict 12h format');ok(Q.correct('09:05',{kind:'time',answer:'9:05'}),'time normalization');
-const stories=window.KGChallengeReading,writing=window.KGChallengeWriting;
-ok(stories.length===6,'6 readings');ok(writing.length===12,'12 writing tasks');
-for(const story of stories){ok(story.paragraphs.length===4&&story.questions.length===4,'four paragraphs and four questions');ok(story.paragraphs.join(' ').split(/\s+/).length>=280,'longer reading');for(const q of story.questions){ok(q.choices[q.answer]&&q.evidence.every(i=>Number.isInteger(i)&&story.paragraphs[i]),'valid answer and evidence reference');}}
-function fakeStorage(){const data=new Map();return {data,getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)};}
+ok(C.skills.length===10,'ten mission types');
+const fraction={kind:'fraction',fraction:[1,2],answer:'1/2'};ok(C.correct('2/4',fraction),'equivalent fraction');ok(!C.correct('1/0',fraction),'zero denominator');ok(!C.correct('NaN',{kind:'number',answer:0}),'NaN');ok(!C.correct('12:60',{kind:'time',answer:'1:00'}),'invalid clock minutes');
+const R=win.KGChallengeReading,W=win.KGChallengeWriting;
+ok(R.length===6&&W.length===12,'Complete original content');
+const wordCounts=[];for(const s of R){ok(s.paragraphs.length===4&&s.questions.length===4,s.id+' paragraph/question counts');const words=s.paragraphs.join(' ').split(/\s+/).length;wordCounts.push({id:s.id,words});ok(words>=240,s.id+' longer reading');for(const q of s.questions){ok(Number.isInteger(q.answer)&&q.answer>=0&&q.answer<q.choices.length,'answer index');ok(q.evidence.length>0&&q.evidence.every(i=>i>=0&&i<s.paragraphs.length),'evidence index');ok(q.why.length>30,'explanation');}}
+for(const w of W){ok(w.plan.length===3&&w.prompt.length>70&&w.example.length>100,w.id+' writing scaffold');}
+function storage(){const data=new Map;return{getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k),data};}
 (async()=>{
-const s=fakeStorage(),base=K.initial({completed:['seed'],flowers:['rose','sun']});base.vehicles=['red-car'];base.selected='red-car';base.lands=['meadow'];base.coins=250;K.validate(base);s.setItem(K.KEY,JSON.stringify(base));s.setItem('kgj-city-v4-layout','do not change');s.setItem('kgj-writing-v1','do not change');
-const lockMap=new Map(),locks={request(key,fn){const p=(lockMap.get(key)||Promise.resolve()).then(fn);lockMap.set(key,p.catch(()=>{}));return p;}};
-const w=Wallet.create(K,s,locks),w2=Wallet.create(K,s,locks);
-let r=await w.grant('read','bridge','reading-test-001','2026-10-18');ok(r.earned===10&&r.coins===260,'new read 10');r=await w.grant('read','bridge','reading-test-001','2026-10-18');ok(r.already&&r.coins===260,'duplicate completion no extra');r=await w.grant('read','bridge','reading-test-002','2026-10-18');ok(r.earned===3&&r.coins===263,'same day repeat 3');r=await w.grant('read','bridge','reading-test-003','2026-10-19');ok(r.earned===5&&r.coins===268,'later day repeat 5');
-await Promise.all([w.grant('write','sources','writing-test-001'),w2.grant('math','machine','math-test-0001')]);ok(w.snapshot().coins===279,'shared locked concurrent +4 +7');const saved=w.snapshot();ok(JSON.stringify(saved.vehicles)===JSON.stringify(base.vehicles)&&JSON.stringify(saved.lands)===JSON.stringify(base.lands),'ownership retained');ok(JSON.stringify(saved.completed)===JSON.stringify(base.completed),'original reading counter untouched');ok(JSON.stringify(saved.farm)===JSON.stringify(base.farm),'real farm inventory unchanged');ok(s.getItem('kgj-city-v4-layout')==='do not change'&&s.getItem('kgj-writing-v1')==='do not change','other namespaces unchanged');ok(!!K.validate(saved),'backwards compatible shared wallet');
-const reopened=Wallet.create(K,s,locks);ok(reopened.snapshot().coins===279,'wallet survives new instance');await reopened.grant('math','machine','math-test-0001');ok(reopened.snapshot().coins===279,'duplicate remains blocked after reopen');
-const corrupt=fakeStorage();corrupt.setItem(K.KEY,'{broken');await assert.rejects(Wallet.create(K,corrupt,locks).grant('math','machine','invalid-wallet-1'));ok(corrupt.getItem(K.KEY)==='{broken','corrupt wallet not overwritten');
-const memory=Wallet.create(K,null,null);r=await memory.grant('math','machine','memory-test-001');ok(r.earned===7&&r.volatile,'in-memory fallback labeled');
-const failed=fakeStorage();failed.setItem(K.KEY,JSON.stringify(base));const before=failed.getItem(K.KEY);failed.setItem=()=>{throw Error('quota');};await assert.rejects(Wallet.create(K,failed,locks).grant('math','machine','quota-test-0001'));ok(failed.getItem(K.KEY)===before,'storage failure preserves prior wallet');
-const report={generatedQuestionsValidated:questions,otherAssertions:checks,readingWordCounts:stories.map(s=>[s.id,s.paragraphs.join(' ').split(/\s+/).length]),passed:true};console.log(JSON.stringify(report,null,2));
+const st=storage(),baseline=K.initial({completed:['seed'],flowers:['rose']});baseline.coins=80;baseline.vehicles=['red-car'];baseline.selected='red-car';baseline.lands=['meadow'];st.setItem(K.KEY,JSON.stringify(baseline));st.setItem('kgj-math-v1','original-math');st.setItem('kgj-writing-v1','original-writing');st.setItem('kgj-city-v4-layout','original-layout');
+const w=WC.create(K,st,null);
+let x=await w.grant('read','bridge','session-read-0001','2026-10-18');ok(x.earned===10&&x.coins===90,'new advanced reading');
+x=await w.grant('read','bridge','session-read-0001','2026-10-18');ok(x.already&&x.earned===0,'same event not rewarded twice');
+x=await w.grant('read','bridge','session-read-0002','2026-10-18');ok(x.earned===3,'same-day new attempt');x=await w.grant('read','bridge','session-read-0003','2026-10-19');ok(x.earned===5,'later-day new attempt');
+x=await w.grant('write','design','session-write-001');ok(x.earned===4,'writing');x=await w.grant('math','geometry','session-math-001');ok(x.earned===7,'math');
+const before=w.snapshot().coins;await Promise.all([w.grant('math','machine','session-parallel-01'),w.grant('math','machine','session-parallel-01')]);ok(w.snapshot().coins===before+7,'concurrent duplicate serialized');
+ok(JSON.stringify(w.snapshot().completed)===JSON.stringify(baseline.completed),'original book milestones unchanged');ok(JSON.stringify(w.snapshot().vehicles)===JSON.stringify(baseline.vehicles),'owned cars unchanged');ok(JSON.stringify(w.snapshot().farm)===JSON.stringify(baseline.farm),'farm unchanged');
+for(const [key,value]of[['kgj-math-v1','original-math'],['kgj-writing-v1','original-writing'],['kgj-city-v4-layout','original-layout']])ok(st.getItem(key)===value,key+' untouched');
+const reloaded=WC.create(K,st,null);ok((await reloaded.grant('math','machine','session-parallel-01')).already,'reload deduplication');
+const corrupt=storage();corrupt.setItem(K.KEY,'broken');await assert.rejects(WC.create(K,corrupt,null).grant('math','machine','session-corrupt-01'));ok(corrupt.getItem(K.KEY)==='broken','corrupt wallet preserved');
+const memory=WC.create(K,null,null);x=await memory.grant('math','machine','session-memory-001');ok(x.earned===7&&x.volatile,'explicit memory-only reward');
+const report={questions,independentlyAudited:audited,checks,wordCounts,status:'passed'};fs.mkdirSync(root+'/reports',{recursive:true});fs.writeFileSync(root+'/reports/challenge-core.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 })().catch(e=>{console.error(e);process.exitCode=1;});

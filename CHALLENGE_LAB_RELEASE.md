@@ -1,88 +1,102 @@
-# Challenge Lab 1.0 — harder reading, writing and math
+# Challenge Lab — harder reading, writing and math
 
-## Play
+## Open after deployment
 
-- Highest level: https://bosswill720.github.io/kingdom-garden-junior/challenge.html?release=challenge-1&level=2
-- Remembered level / Reason default: https://bosswill720.github.io/kingdom-garden-junior/challenge.html?release=challenge-1
+- [Start directly in Deep Think](https://bosswill720.github.io/kingdom-garden-junior/challenge.html?release=challenge-1&level=2)
+- [Choose any challenge level](https://bosswill720.github.io/kingdom-garden-junior/challenge.html?release=challenge-1)
+- [Original learning app](https://bosswill720.github.io/kingdom-garden-junior/library.html?release=challenge-1#home)
 
-A commit alone does not establish successful GitHub Pages deployment. The shipped entry loads versioned modules; its playable URL is confirmed separately after publishing.
+This is a new advanced track, not a replacement for the original beginner activities. The main library home and story shelf include a prominent Challenge Lab entry. Difficulty is selectable by task readiness, not a maximum based on the child's age. The direct link above selects the hardest tier without a prerequisite quiz.
 
-## Substantial difficulty increase
-
-Three selectable levels: **Stretch**, **Reason**, **Deep Think**. Reason is the default; the link with `level=2` selects Deep Think. No age gate or automatically inferred reading/math level. This is not an adaptive placement test.
+## Implemented content
 
 ### Reading detectives
 
-Six original stories, **288–456 words each**, in four substantial paragraphs rather than one sentence per page. Two stories at each level:
+Six original multi-paragraph stories, each followed by four questions that require both an answer and a supporting paragraph. Narration, larger text, rereading and worked explanations are available. These are substantially longer texts than the original one-line pages.
 
-- Stretch: The Bridge That Bent (288); The Case of the Moving Seeds (304).
-- Reason: The Long Way That Worked (358); The Moon Garden Experiment (356).
-- Deep Think: Two Plans for One Square (456); The Clock Tower's Missing Ring (452).
+| Tier | Story | Word count |
+|---|---|---:|
+| Stretch | The Bridge That Bent | 288 |
+| Stretch | The Case of the Moving Seeds | 304 |
+| Reason | The Long Way That Worked | 358 |
+| Reason | The Moon Garden Experiment | 356 |
+| Deep Think | Two Plans for One Square | 456 |
+| Deep Think | The Clock Tower's Missing Ring | 452 |
 
-Each has four questions: **24 evidence questions total**. A child chooses an answer AND a directly supporting paragraph. The texts and questions address cause, trade-offs, observation versus assumption, fair comparisons, limitations of evidence, conflicting accounts, two-source comparison and counterarguments. Evidence must come from the provided story; optional worked explanations show the reasoning. The stories are fictional reasoning scenarios, not reports of actual experiments.
-
-Reading text can be enlarged. Explicit Hear the story / Stop controls use the device's English speech voice. There are no new natural AI voice recordings, timing files or claimed word-synchronized narration in this module.
+Topics include cause and effect, fair testing, observations versus assumptions, constrained planning, comparing two sources, sampling limitations, reconciling accounts, and the limits of a conclusion. All 24 questions include explicit evidence keys and explanations. Reading questions are selected-response plus evidence selection, not automated free-response assessment.
 
 ### Writers' workshop
 
-Twelve independent composition/editing tasks, four at each level. Targets progress from 3–5 sentences to 5–7 sentences and two short paragraphs. Prompts cover vivid description, opinions with reasons, instructions, editing, alternative decisions, plan comparison, fair tests, balanced recommendations, defensible claims, design constraints and two viewpoints.
+Twelve original response tasks, four in each tier. They move beyond tracing: descriptive scenes, supported opinions, instructions, editing, persuasive paragraphs, alternative outcomes, comparing plans, designing tests, balanced recommendations, supported claims, engineering trade-offs, and two viewpoints.
 
-Each task includes a planning checklist, sentence-start support, an optional example and an explicit self-review step. Children can type or open a **fixed two-page lined Pencil notebook**. Earlier lines stay visible; page selection does not clear ink. Undo, per-page clear with confirmation, pen priority, Pencil-only filtering, geometry frozen per stroke, pointer cancellation, local draft persistence and picture export are included. The whole notebook stays locked against scrolling while writing. The original tracing desk remains available separately.
-
-This notebook does **not** recognize handwriting, check grammar, count handwritten sentences or grade a paragraph. The self-review requires a nonempty response and checklist confirmation, not proof that the suggested length or learning objective was achieved. A worked example is recorded as support. Starting another completed writing task asks before replacing that task's old draft.
+Targets range from three or four original sentences to two short paragraphs. Each task has a plan, optional starter language, a worked example, and three self-review points. Responses may be typed or written in a locked two-page Pencil notebook. The notebook accepts pen/touch/mouse, has Pencil-only filtering, undo, clear-page confirmation and picture export. Both text and normalized pen strokes persist locally in the Challenge Lab save. It is not native PencilKit palm rejection, handwriting recognition, grammar scoring, or proof that the requested response was independently produced. A child or grown-up reviews the response.
 
 ### Math missions
 
-Eight generated mission types across all three levels; five puzzles per completed mission:
+Ten mission types across three selectable tiers. Each completed adventure includes five generated puzzles. Answers are entered rather than selected from a short multiple-choice list. Every question includes a specific strategy hint and a complete worked explanation.
 
-1. Delivery Planner — several operations and load/return problems; upper-level multiplication with two-digit quantities.
-2. Mystery Machine — missing numbers and working backward through multiply-then-add operations.
-3. Fraction Kitchen — equal parts, equivalent fractions, and fractional quantities of a collection.
-4. Number Architect — tens/hundreds, regrouping, swapping digits and positive differences.
-5. Clockwork Trail — elapsed time across the hour, with extra stops at the highest level.
-6. Market Budget — two-item costs, bundle costs, change and greatest affordable whole quantity.
-7. Pattern Detective — explicitly stated arithmetic, increasing-jump or double-then-add rules.
-8. Clue Chest — uniquely determined two-/three-digit numbers from combined constraints.
+- Delivery Planner: multi-step loading, delivery, returns and equal sharing.
+- Mystery Machine: unknown inputs, reversing up to three operations.
+- Fraction Kitchen: equal parts, equivalent fractions, and fractions of a remaining quantity.
+- Number Architect: tens/hundreds, regrouping, digit exchanges and a further division step.
+- Clockwork Trail: elapsed time across hours, including separate driving and rest durations.
+- Market Budget: item bundles, multiple purchases and greatest affordable whole quantities.
+- Pattern Detective: explicit rules, changing increments and doubling with an adjustment.
+- Clue Chest: two- and three-digit numbers satisfying several constraints.
+- Garden Geometry: perimeter, missing sides from area, and area inferred from perimeter.
+- Fair Share Workshop: equal groups, remainders, and box-content reasoning.
 
-Answers are entered instead of guessed from a multiple-choice list. Equivalent fractions and valid hour:minute answers are accepted. A strategy hint, complete worked solution and private thinking notebook are available. No countdown, speed penalty, lost lives or mandatory level promotion. Asking for help still earns the same practice reward. A feedback choice (Too easy / Good challenge / Need more support) is saved for the grown-up; it does not automatically alter difficulty.
+For example, a Deep Think mission can require `(boxes × books − delivered + returns) ÷ classrooms`, not just a larger single addition. Another uses part of a collection, then a different fraction of what remains. A numeric notebook is available for scratch work; it does not recognize written answers. Final answers are typed. There are no timers, lives or penalties for taking time.
 
-## Shared coins and preservation
+## Same city wallet
 
-No existing reading, writing, math, city, artwork or economy module is replaced. `kingdom-core-v2.js` remains unchanged. `library.html` only loads the new navigation-only `challenge-nav-v1.js`; the new link appears on the library sidebar and home/library screen, without cluttering the story reader. The previous learning screens remain available through explicit links.
+The existing `kingdom-core-v2.js` is not changed. Challenge completions use the existing `kgj-kingdom-v1` wallet and its lock name.
 
-`challenge-wallet-v1.js` uses the established `kgj-kingdom-v1` wallet and the same Web Locks key. It validates before writing, backs up the previous wallet, and uses persistent unique completion claims to prevent repeat deposits. Writing still earns 4 coins, five math questions 7, a new challenge story 10, same-day completed rereads 3 and eligible later-day rereads 5. Supported completion receives the same base rewards. A failed deposit remains pending with a Retry coin save control rather than claiming payment succeeded.
+| Activity completion | Coins |
+|---|---:|
+| First completion of each advanced story investigation | 10 |
+| Another completed attempt that same day | 3 |
+| Eligible later-day completion | 5 |
+| Written response with self-review | 4 |
+| Five math questions | 7 |
 
-Challenge reading dates are added as `challengeReadDays` in that wallet; the original thirty-title reading unlock counter and vehicle gates are not changed. Existing vehicles, land, farm and flowers are retained. Notebook interaction does not advance crops or award coins by itself. Challenge coins are the normal earned wallet, not the city's separate testing funds.
+Hints or worked explanations do not remove the base reward. They are recorded as supported practice. Completion events carry unique identifiers; retries/reloads do not pay the same event twice. A failed deposit stays pending with a retry option.
 
-Learning progress, one unfinished activity, local text and two-page ink drafts use `kgj-challenge-v1`, with a recovery snapshot. Backups include Challenge Lab data only—not the city wallet or original writing/math badges. Restore is validated and confirmed and cannot reissue an already-claimed reward. Corrupt challenge data is preserved, not overwritten. Shared-wallet corruption prevents deposits rather than replacing the wallet. Storage-unavailable play is clearly temporary. No cloud sync, accounts, microphone, analytics, handwriting upload, API key or real-money purchases are introduced.
+Advanced-story bookkeeping is additional metadata in the same wallet; the original 30-book completion list, original farm-growth rules, vehicle prices and book gates are not modified. Advanced stories earn spendable coins but do not increment those legacy 30-book unlock gates. Traffic, city layouts, original writing badges and original math stickers are not altered.
+
+## Saves and privacy
+
+`kgj-challenge-v1` contains challenge settings, completed attempts, the unfinished activity, and local text/ink drafts. A recovery copy is kept before replacing a saved version. Bad data is not silently overwritten. The Challenge Lab export/import covers its own records and notebook drafts, not the city wallet, city placement, or older module saves. Restoring it does not reissue already-paid coin transactions.
+
+Two notebook pages are available per draft. Limits are 80 draft entries, 500 recorded completions, 500 pen strokes per page, and 8,000 text characters per response. Export before clearing browser data; storage is local, not cross-device cloud sync. Browsers without usable storage show a temporary-progress warning. With no browser Web Locks, use one tab for reward/purchase actions.
+
+No new accounts, microphones, uploaded handwriting, advertisements, paid APIs or natural-narration recordings are introduced. Spoken guidance uses the device voice. No full-curriculum, age-placement, grade-certification or validated-learning-effectiveness claim is made.
 
 ## Verification actually performed
 
-- **24,000 generated questions** checked against independently recomputed answers from their prompts. Included deterministic generation, unique mystery-number solutions, numeric bounds, answer parsing, time normalization and equivalent fractions.
-- **67 additional Node assertions** covering data shape, word counts, paragraph evidence, all shared reward types, same-/later-day reading, duplicate prevention, reopening, locks, preserved ownership, corruption and write failures.
-- **220 complete-page Chromium assertions** using the actual authored HTML/CSS/JS, exact current wallet core (Git blob e2c3c0fde6bb71e68d8864cfcec84219b834670c), real math/read flows and the notebook. All six reading investigations and all 24 math mission/level combinations were completed through controls. Checked help/retry rewards, mouse ink, synthetic Pencil and touch filtering, page lock, two notebook pages, persistence and five viewport sizes (1440×900, 1112×834, 834×1112, 390×844, 320×700). No uncaught JavaScript errors observed.
+The first complete validation run was [GitHub Actions 39112013632](https://github.com/Bosswill720/kingdom-garden-junior/actions/runs/39112013632), on candidate commit `a69b4ffb6c7d9593265999c2bf03c8d7103d08b8`.
 
-The authoring environment blocks browser URL/file navigation and external network access. Browser tests loaded the whole page with `page.set_content`, with explicit browser-storage and speech substitutes. They are not a live GitHub Pages test, a physical iPad/Safari/Apple Pencil test or an audible voice test. Screenshots were reviewed; a fixed notebook screenshot should be captured as a viewport image, not a full-document image.
+- 30,000 generated questions exercised across 10 missions and three levels. All generated answers were accepted and invalid answers rejected. 14,000 harder/added questions were additionally checked using separate expected-result calculations, including valid loading bounds and unique logic solutions.
+- 118 content/wallet assertions passed: story lengths, evidence keys, writing scaffolds, answer formats, same-day/later rereads, new attempts, duplicate transactions, reloads, original asset preservation, corrupt wallets, and explicit temporary storage.
+- 263 full-page Chromium assertions passed. The tests used real HTTP navigation to the authored page and real browser localStorage on a GitHub runner, not a mock DOM or `set_content` substitute. They completed all 30 game/tier combinations, all six reading investigations, all twelve writing tasks, assisted rereading, reward deposits, actual mouse strokes, synthetic pen input, two-page notebook operation, reload persistence, export/import and four viewport sizes. No uncaught page errors were observed.
+- Speech output was replaced by an invocation spy in those browser tests. Audible device speech and physical iPad/Safari/Apple Pencil operation remain unverified.
+- Screenshots were captured and reviewed at actual browser dimensions. They are test captures, not new generated artwork.
 
-These tests do not establish educational effectiveness, grade-level mastery, standardized reading level or full curriculum coverage. The notebook has practical limits (two pages/task, 500 strokes/page and 80 saved drafts); export before approaching storage limits. Use one active reward/purchase tab when Web Locks are unavailable.
+The workflow reruns on the final branch/PR. After merging, its main-branch run additionally waits for nine deployed files to match the checkout byte-for-byte, opens the public Pages app, completes a Deep Think mission and checks its 7-coin reward, then verifies the new library entry point. A commit or an earlier green test alone does not imply that this post-deployment step has passed; inspect the final run.
 
 ## Reproduce
 
-```
+```sh
 node tests/challenge/core.test.cjs
+python -m pip install playwright==1.55.0
+python -m playwright install --with-deps chromium
 python tests/challenge/browser_test.py
+# Only after publishing this exact checkout:
+python tests/challenge/live_smoke.py
 ```
 
-Browser tests require Playwright and a Chromium executable. Without `--base-url` they run explicitly labeled full-page fixtures with storage/speech substitutes. The fixture is the tested mode in this environment. For a normal local-server testing environment, adapt the storage/speech assertions as needed and pass `--base-url http://127.0.0.1:8000`; do not report an unrun HTTP suite as passed.
+GitHub Actions retains JSON reports and screenshots as `challenge-lab-test-reports`. These use synthetic test progress, not a child's real saved work.
 
-## Learning references
+## Release and rollback
 
-Selected tasks were informed by these primary standards descriptions, without claiming complete alignment or certification:
-- Evidence-based reading responses: https://www.thecorestandards.org/ELA-Literacy/RL/3/
-- Reasons, explanatory writing and revision: https://www.thecorestandards.org/ELA-Literacy/W/3/
-- Multi-step problems and multiplication/division: https://www.thecorestandards.org/Math/Content/3/OA/
-- Equal parts and equivalent fractions: https://www.thecorestandards.org/Math/Content/3/NF/
-
-## Rollback
-
-Revert this additive release. No force-push or existing learning-data reset is needed. The base wallet accepts the added activity claims and challenge reading dates; a rollback should preserve them. The current city and easier activities are unchanged by removal of the new Challenge Lab entry files.
+Developed on `feature/challenge-learning-1`. The release adds the Challenge Lab modules and one launch script in `library.html`. Original reading, writing, math, city and economy source modules remain unchanged. Merge as one reviewed change; never force-push. Reverting the release hides the advanced track but does not delete its local records or reset city coins and purchases.

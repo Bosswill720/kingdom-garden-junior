@@ -1,101 +1,98 @@
-"""Full authored-page tests. --fixture explicitly substitutes storage/speech.
-HTTP navigation is restricted in the authoring environment; not a real-iPad test.
-Run locally with: python tests/challenge/browser_test.py --base-url http://127.0.0.1:8000
-"""
-from pathlib import Path
-import argparse, json, re
+"""Actual local-HTTP page tests. Only audible speech is replaced by an invocation spy."""
+import functools, http.server, json, os, pathlib, threading, time
 from playwright.sync_api import sync_playwright
-ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT.parent/'reports';OUT.mkdir(exist_ok=True)
-parser=argparse.ArgumentParser();parser.add_argument('--base-url');args=parser.parse_args()
-fixture=r'''<script>
-window.__storageData={}; Object.defineProperty(window,'localStorage',{configurable:true,get(){return {getItem:k=>window.__storageData[k]??null,setItem:(k,v)=>window.__storageData[k]=String(v),removeItem:k=>delete window.__storageData[k]};}});
-window.__spoken=[];window.SpeechSynthesisUtterance=function(t){this.text=t;};Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{getVoices:()=>[],cancel(){window.__cancelled=(window.__cancelled||0)+1;},speak(u){window.__spoken.push(u.text);}}});
-</script>'''
-html=(ROOT/'challenge.html').read_text()
-html=re.sub(r'<link rel="stylesheet" href="./([^"?]+)[^"]*">',lambda m:'<style>'+(ROOT/m[1]).read_text()+'</style>',html)
-html=re.sub(r'<script src="./([^"?]+)[^"]*"></script>',lambda m:'<script>'+(ROOT/m[1]).read_text()+'</script>',html)
-html=html.replace('</head>',fixture+'</head>')
-checks=[]
-def check(name,condition):
- if not condition: raise AssertionError(name)
- checks.append(name)
-def load(page):
- if args.base_url:page.goto(args.base_url.rstrip('/')+'/challenge.html',wait_until='load')
- else:page.set_content(html,wait_until='load')
- page.wait_for_function('window.KGChallenge && document.querySelector(".cards .card")')
-def click(page,a):page.locator(f'[data-act="{a}"]').first.click()
-def home(page):page.locator('#home').click()
-def question(page):return page.evaluate('KGChallenge.getQuestion()')
-def wallet(page):return page.evaluate('JSON.parse(localStorage.getItem("kgj-kingdom-v1")||"null")')
-def settle(page):page.wait_for_timeout(40)
-with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'])
- page=browser.new_page(viewport={'width':1112,'height':834},device_scale_factor=1)
- errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.on('dialog',lambda d:d.accept())
- load(page)
- check('default Reason level',page.evaluate('KGChallenge.getState().level')==1)
- check('two long readings at selected level',page.locator('.card').count()==2)
- page.screenshot(path=str(OUT/'challenge-home-1112.png'),full_page=True)
- # 6 reading investigations; evidence is mandatory.
- for level in range(3):
-  for task in ['bridge','seeds'] if level==0 else ['route','moon-garden'] if level==1 else ['festival','clocktower']:
-   home(page);page.locator(f'[data-act="level"][data-level="{level}"]').click();page.locator('[data-act="tab"][data-tab="read"]').click();page.locator(f'[data-id="{task}"][data-kind="read"]').click()
-   check('four substantial paragraphs '+task,page.locator('.passage').count()==4)
-   if task=='festival':page.screenshot(path=str(OUT/'reading-deep.png'),full_page=True)
-   click(page,'questions')
-   if task=='bridge':
-    click(page,'check-read');check('requires answer and evidence','both' in page.locator('#questionFeedback').inner_text())
-   for i in range(4):
-    q=question(page);page.locator(f'[data-choice="{q["answer"]}"]').click();page.locator(f'[data-evidence="{q["evidence"][0]}"]').click();click(page,'check-read');check(f'{task} evidence question {i}',page.locator('#next').is_visible());click(page,'next')
-   page.wait_for_selector('.completed');check('read reward '+task,'+10 city coins' in page.locator('.completed').inner_text())
- check('six readings +60 shared coins',wallet(page)['coins']==60)
- # All 24 math game/level combinations, 5 questions each.
- for level in range(3):
-  for skill in ['delivery','machine','fractions','place','time','market','patterns','logic']:
-   home(page);page.locator(f'[data-act="level"][data-level="{level}"]').click();page.locator('[data-act="tab"][data-tab="math"]').click();page.locator(f'[data-id="{skill}"][data-kind="math"]').click()
-   if level==2 and skill=='machine':page.screenshot(path=str(OUT/'math-deep.png'),full_page=True)
-   for i in range(5):
-    q=question(page);page.locator('#answer').fill(str(q['answer']));page.locator('#checkMath').click();check(f'{skill}-{level}-{i} correct',page.locator('#next').is_visible());click(page,'next')
-   page.wait_for_selector('.completed');check(f'{skill}-{level} reward','+7 city coins' in page.locator('.completed').inner_text())
- check('math deposited to same wallet',wallet(page)['coins']==228)
- # A supported retry remains rewarded; original counts stay intact.
- home(page);page.locator('[data-act="tab"][data-tab="math"]').click();page.locator('[data-id="logic"][data-kind="math"]').click();page.locator('#answer').fill('999999');page.locator('#checkMath').click();check('wrong answer permits retry',page.locator('#answer').is_enabled());click(page,'hint');check('specific hint displayed',len(page.locator('#questionFeedback').inner_text())>20)
- for i in range(5):click(page,'worked');click(page,'understood');click(page,'next')
- page.wait_for_selector('.completed');check('assisted attempt still earns 7',wallet(page)['coins']==235)
- check('assistance explicitly recorded','5 questions completed with' in page.locator('.completed').inner_text())
- # Writing: independent content, locked notebook, real mouse ink and Pencil filtering.
- home(page);page.locator('[data-act="tab"][data-tab="write"]').click();page.locator('[data-id="sources"][data-kind="write"]').click();check('writing has no tracing gate',page.locator('#draftText').is_visible());click(page,'complete-writing');check('empty writing not completed',page.locator('#finishWriting').is_visible());click(page,'notebook');page.wait_for_selector('#desk[open]')
- rect=page.locator('#ink').bounding_box();page.mouse.move(rect['x']+90,rect['y']+70);page.mouse.down();page.mouse.move(rect['x']+200,rect['y']+110,steps=12);page.mouse.up();check('real mouse handwriting saved',page.evaluate('KGChallenge.getState().drafts["write-sources"].pages[0].length')==1)
- y0=page.evaluate('scrollY');page.mouse.wheel(0,650);settle(page);check('locked writing page does not scroll',page.evaluate('scrollY')==y0)
- page.locator('#pencilOnly').check();n=page.evaluate('KGChallenge.getState().drafts["write-sources"].pages[0].length')
- page.evaluate('''()=>{const c=document.getElementById('ink'),r=c.getBoundingClientRect();c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:10,pointerType:'touch',clientX:r.x+80,clientY:r.y+80,bubbles:true}));c.dispatchEvent(new PointerEvent('pointerup',{pointerId:10,pointerType:'touch',clientX:r.x+120,clientY:r.y+120,bubbles:true}));}''')
- check('Pencil only ignores touch',page.evaluate('KGChallenge.getState().drafts["write-sources"].pages[0].length')==n)
- page.evaluate('''()=>{const c=document.getElementById('ink'),r=c.getBoundingClientRect();for(const [type,x,y] of [['pointerdown',90,140],['pointermove',190,145],['pointerup',200,150]])c.dispatchEvent(new PointerEvent(type,{pointerId:22,pointerType:'pen',clientX:r.x+x,clientY:r.y+y,bubbles:true,cancelable:true}));}''')
- check('synthetic Pencil draws',page.evaluate('KGChallenge.getState().drafts["write-sources"].pages[0].length')==n+1)
- page.locator('#pageNext').click();check('second lined page available',page.locator('#pageCount').inner_text()=='2 / 2');page.screenshot(path=str(OUT/'writing-notebook.png'),full_page=True);page.locator('#deskClose').click()
- page.locator('#draftText').fill('I propose a small track with a separate reading area. Both groups can help. We should try the plan and ask families who were not at the garage.');page.locator('[data-check="0"]').check();page.locator('[data-check="1"]').check();page.locator('[data-check="2"]').check();page.screenshot(path=str(OUT/'writing-deep.png'),full_page=True);click(page,'complete-writing');page.wait_for_selector('.completed');check('writing earns 4',wallet(page)['coins']==239)
- check('original books not fabricated',wallet(page)['completed']==[])
- check('normal assets not awarded by challenge',wallet(page)['vehicles']==[])
- # Voice invoked only by interaction and explicitly stopped on navigation.
- home(page);page.locator('[data-act="tab"][data-tab="read"]').click();page.locator('[data-id="festival"][data-kind="read"]').click();click(page,'hear-story');check('voice explicitly invoked',page.evaluate('__spoken.length')>0);home(page);check('voice cancelled on leaving',page.evaluate('__cancelled')>0)
- # Stable responsive layouts with all modules.
- for width,height in [(1440,900),(834,1112),(1112,834),(390,844),(320,700)]:
-  page.set_viewport_size({'width':width,'height':height});home(page)
-  check(f'home no horizontal overflow {width}',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
-  page.locator('[data-act="tab"][data-tab="math"]').click();page.locator('[data-id="machine"][data-kind="math"]').click()
-  check(f'math no overflow {width}',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
-  if width==834:page.screenshot(path=str(OUT/'math-834.png'),full_page=True)
-  click(page,'scratch');rect=page.locator('#ink').bounding_box();check(f'notebook fits viewport {width}',rect['x']>=0 and rect['y']>=0 and rect['x']+rect['width']<=width+1 and rect['y']+rect['height']<=height+1);page.locator('#deskClose').click()
-  if width==390:home(page);page.screenshot(path=str(OUT/'home-390.png'),full_page=True)
- # Saved state is validated and preserves notebook/history (real page reload fixture).
- stored=page.evaluate('JSON.parse(JSON.stringify(window.__storageData))');history=page.evaluate('KGChallenge.getState().history.length')
- load(page);page.evaluate('(d)=>window.__storageData=d',stored)
- # Reload scripts over injected storage, retaining the saved bytes.
- source=html.replace('window.__storageData={};','window.__storageData='+json.dumps(stored)+';')
- page.set_content(source,wait_until='load');check('saved history restored',page.evaluate('KGChallenge.getState().history.length')==history);check('ink restored',page.evaluate('KGChallenge.getState().drafts["write-sources"].pages[0].length')>=2)
- check('shared reward restored',wallet(page)['coins']==239)
- check('no uncaught JS errors',len(errors)==0)
- print(json.dumps({'passed':len(checks),'browser':'Chromium','mode':'http' if args.base_url else 'full-page fixture with storage/speech substitutes','errors':errors,'checks':checks},indent=2))
- (OUT/'browser-results.json').write_text(json.dumps({'passed':len(checks),'mode':'http' if args.base_url else 'fixture','errors':errors,'checks':checks},indent=2))
- browser.close()
+ROOT=pathlib.Path(__file__).resolve().parents[2]
+OUT=ROOT/'reports';OUT.mkdir(exist_ok=True)
+class Quiet(http.server.SimpleHTTPRequestHandler):
+    def log_message(self,*args): pass
+server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(ROOT)))
+threading.Thread(target=server.serve_forever,daemon=True).start()
+BASE=f'http://127.0.0.1:{server.server_port}'
+checks=[];errors=[]
+def check(value,label):
+    assert value,label
+    checks.append(label)
+def balance(p):
+    return p.evaluate("JSON.parse(localStorage.getItem('kgj-kingdom-v1')||'{\"coins\":0}').coins")
+def choose(p,kind,level,ident):
+    p.click('#home');p.click(f'[data-act="level"][data-level="{level}"]');p.click(f'[data-act="tab"][data-tab="{kind}"]');p.click(f'[data-act="start"][data-id="{ident}"]')
+with sync_playwright() as pw:
+    browser=pw.chromium.launch(headless=True,args=['--no-sandbox'])
+    context=browser.new_context(viewport={'width':1112,'height':834},accept_downloads=True)
+    context.add_init_script("window.__speech=0;window.__stops=0;if(window.speechSynthesis){speechSynthesis.speak=function(){window.__speech++};speechSynthesis.cancel=function(){window.__stops++};}")
+    p=context.new_page();p.on('pageerror',lambda e:errors.append(str(e)));p.on('dialog',lambda d:d.accept())
+    p.goto(BASE+'/challenge.html?release=challenge-1&level=2');p.wait_for_selector('.cards')
+    check(p.evaluate('KGChallenge.getState().level')==2,'Deep Think deep link')
+    p.evaluate("const s=KingdomCore.initial({completed:['seed'],flowers:['rose']});s.coins=120;s.vehicles=['red-car'];s.selected='red-car';localStorage.setItem(KingdomCore.KEY,JSON.stringify(s));localStorage.setItem('kgj-math-v1','original-math');localStorage.setItem('kgj-writing-v1','original-writing');localStorage.setItem('kgj-city-v4-layout','original-city');")
+    p.screenshot(path=str(OUT/'challenge-home-ipad.png'),full_page=True)
+    skills=p.evaluate('KGChallengeCore.skills.map(s=>s.id)')
+    check(len(skills)==10,'Ten mission cards')
+    for level in range(3):
+        for ident in skills:
+            choose(p,'math',level,ident);before=balance(p)
+            for index in range(5):
+                q=p.evaluate('KGChallenge.getQuestion()')
+                if level==2 and ident=='delivery' and index==0:
+                    p.screenshot(path=str(OUT/'challenge-deep-math.png'),full_page=True)
+                    p.fill('#answer','999999');p.click('#checkMath')
+                    check(p.locator('#questionFeedback').inner_text().startswith('Not quite'),'Incorrect answer feedback')
+                    p.click('[data-act="hint"]');check(p.evaluate('KGChallenge.getState().session.questionHelp'),'Hint marked supported')
+                p.fill('#answer',str(q['answer']));p.click('#checkMath');p.wait_for_selector('#next:visible')
+                check(p.evaluate('KGChallenge.getState().session.solved'),f'{ident}/{level}/{index} solved')
+                p.click('#next')
+            p.wait_for_selector('.completed');check(balance(p)==before+7,f'{ident}/{level} deposits 7 once')
+            check(p.evaluate('KGChallenge.getState().session') is None,'Completed math clears active session')
+    # Complete every reading and evidence question using the real handlers.
+    stories=p.evaluate('KGChallengeReading.map(s=>({id:s.id,level:s.level}))')
+    for story in stories:
+        choose(p,'read',story['level'],story['id']);before=balance(p)
+        p.click('[data-act="hear-story"]');check(p.evaluate('__speech')>0,'Device narration invoked');p.click('[data-act="stop"]')
+        p.click('[data-act="questions"]')
+        for index in range(4):
+            q=p.evaluate('KGChallenge.getQuestion()');p.click(f'[data-act="option"][data-choice="{q["answer"]}"]');p.click(f'[data-act="evidence"][data-evidence="{q["evidence"][0]}"]');p.click('#checkRead');p.wait_for_selector('#next:visible');p.click('#next')
+        p.wait_for_selector('.completed');check(balance(p)==before+10,f'{story["id"]} deposits 10')
+    # A newly completed reread, with the worked-example route, still earns coins.
+    choose(p,'read',2,'festival');before=balance(p);p.click('[data-act="questions"]')
+    for index in range(4):
+        p.click('[data-act="worked"]');p.click('[data-act="understood"]');p.click('#next')
+    p.wait_for_selector('.completed');check(balance(p)==before+3,'Supported same-day reread deposits 3')
+    tasks=p.evaluate('KGChallengeWriting.map(s=>({id:s.id,level:s.level}))')
+    for task in tasks:
+        choose(p,'write',task['level'],task['id']);before=balance(p)
+        p.fill('#draftText','I recommend comparing both plans because speed alone does not tell us the total delivery time. We should keep the load equal, record each result, and revise the plan if the evidence changes.')
+        for i in range(3):p.check(f'[data-check="{i}"]')
+        p.click('#finishWriting');p.wait_for_selector('.completed');check(balance(p)==before+4,f'{task["id"]} deposits 4')
+    saved=balance(p);p.reload();p.wait_for_selector('.cards');check(balance(p)==saved,'Reload does not grant another reward')
+    choose(p,'write',2,'design');p.click('[data-act="notebook"]');p.wait_for_selector('#desk[open]')
+    box=p.locator('#ink').bounding_box();p.mouse.move(box['x']+box['width']*.15,box['y']+box['height']*.3);p.mouse.down();p.mouse.move(box['x']+box['width']*.55,box['y']+box['height']*.4,steps=30);p.mouse.up()
+    check(p.evaluate("KGChallenge.getState().drafts['write-design'].pages[0].length")==1,'Real mouse ink persisted')
+    p.check('#pencilOnly');p.mouse.move(box['x']+40,box['y']+40);p.mouse.down();p.mouse.move(box['x']+100,box['y']+60);p.mouse.up()
+    check(p.evaluate("KGChallenge.getState().drafts['write-design'].pages[0].length")==1,'Pencil-only rejects mouse marks')
+    p.locator('#ink').dispatch_event('pointerdown',{'pointerId':7,'pointerType':'pen','clientX':box['x']+60,'clientY':box['y']+60,'buttons':1})
+    p.locator('#ink').dispatch_event('pointermove',{'pointerId':7,'pointerType':'pen','clientX':box['x']+160,'clientY':box['y']+100,'buttons':1})
+    p.locator('#ink').dispatch_event('pointerup',{'pointerId':7,'pointerType':'pen','clientX':box['x']+200,'clientY':box['y']+110,'buttons':0})
+    check(p.evaluate("KGChallenge.getState().drafts['write-design'].pages[0].length")==2,'Synthetic pen input accepted')
+    offset=p.evaluate('scrollY');p.mouse.wheel(0,500);p.wait_for_timeout(120);check(p.evaluate('scrollY')==offset,'Notebook remains locked against wheel scrolling')
+    for width,height in [(1112,834),(834,1112),(390,844),(320,700)]:
+        p.set_viewport_size({'width':width,'height':height});p.wait_for_timeout(100)
+        b=p.locator('#ink').bounding_box();check(b['x']>=0 and b['y']>=0 and b['x']+b['width']<=width+1 and b['y']+b['height']<=height+1,f'Notebook visible {width}x{height}')
+        check(p.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),f'No notebook horizontal overflow {width}')
+    p.set_viewport_size({'width':1112,'height':834});p.screenshot(path=str(OUT/'challenge-writing-notebook.png'))
+    p.click('#pageNext');check(p.locator('#pageCount').inner_text()=='2 / 2','Second writing page')
+    p.click('#deskClose');p.reload();p.wait_for_selector('.cards');p.click('[data-act="resume"]')
+    check(p.evaluate("KGChallenge.getState().drafts['write-design'].pages[0].length")==2,'Ink survives page reload')
+    p.click('#home')
+    for width,height in [(834,1112),(390,844),(320,700)]:
+        p.set_viewport_size({'width':width,'height':height});p.wait_for_timeout(80)
+        check(p.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),f'Home fits {width}')
+    p.screenshot(path=str(OUT/'challenge-home-phone.png'),full_page=True)
+    p.click('#parentsOpen')
+    with p.expect_download() as info:p.click('[data-act="export"]')
+    info.value.save_as(str(OUT/'example-challenge-save.json'));check((OUT/'example-challenge-save.json').stat().st_size>100,'Export downloads real draft JSON')
+    p.set_input_files('#restoreFile',str(OUT/'example-challenge-save.json'));p.wait_for_selector('.cards');check(balance(p)==saved,'Restore challenge data does not change coins')
+    for key,value in [('kgj-math-v1','original-math'),('kgj-writing-v1','original-writing'),('kgj-city-v4-layout','original-city')]:check(p.evaluate('(k)=>localStorage.getItem(k)',key)==value,key+' untouched')
+    check(not errors,'No uncaught browser errors: '+str(errors))
+    report={'status':'passed','checks':len(checks),'labels':checks,'errors':errors,'navigation':'actual local HTTP','storage':'real browser localStorage','audio':'invocation spy; no audible output verified'}
+    (OUT/'challenge-browser.json').write_text(json.dumps(report,indent=2));print(json.dumps({'status':'passed','checks':len(checks),'errors':errors}))
+    browser.close()
+server.shutdown()
