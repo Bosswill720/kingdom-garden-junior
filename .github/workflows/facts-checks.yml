@@ -1,0 +1,42 @@
+name: Fact Practice checks
+on:
+  push:
+    branches: [main, feature/fact-practice-1]
+    paths: ['facts*', 'tests/facts/**', 'math.html', 'challenge.html', '.github/workflows/facts-checks.yml']
+  pull_request:
+    paths: ['facts*', 'tests/facts/**', 'math.html', 'challenge.html', '.github/workflows/facts-checks.yml']
+permissions:
+  contents: read
+concurrency:
+  group: facts-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Validate generators and reward deduplication
+        run: node tests/facts/core.test.cjs
+      - name: Exercise worksheet and Pencil review over HTTP
+        run: python tests/facts/browser_test.py
+      - name: Verify the public Pages release and its reward flow
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: python tests/facts/live_smoke.py
+      - name: Keep test reports and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fact-practice-reports
+          path: reports/facts*
+          retention-days: 14
